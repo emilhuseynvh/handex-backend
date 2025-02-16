@@ -1,0 +1,17 @@
+{
+    "errors": {
+        "not_found": "The requested resource was not found.",
+        "unauthorized": "You are not authorized to perform this action.",
+        "forbidden": "Access denied.",
+        "bad_request": "Invalid request data.",
+        "validation_failed": "Validation failed.",
+        "server_error": "An unexpected error occurred. Please try again later.",
+        "conflict": "A conflict occurred with existing data.",
+        "unprocessable_entity": "The request was well-formed but could not be processed.",
+        "too_many_requests": "Too many requests. Please try again later.",
+        "service_unavailable": "The service is currently unavailable. Please try again later.",
+        "unsupported_media_type": "The provided media type is not supported.",
+        "method_not_allowed": "The HTTP method is not allowed for this resource.",
+        "request_timeout": "The request took too long. Please try again."
+    }
+}

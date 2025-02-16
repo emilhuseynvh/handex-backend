@@ -1,0 +1,27 @@
+{
+  "validationMessages": {
+    "isNotEmpty": "This field cannot be empty.",
+    "isString": "This field must be a string.",
+    "isNumber": "This field must be a number.",
+    "isInt": "This field must be an integer.",
+    "isBoolean": "This field must be a boolean.",
+    "isEmail": "Please enter a valid email address.",
+    "isUrl": "Please enter a valid URL.",
+    "isUUID": "Invalid UUID format.",
+    "isDate": "Invalid date format.",
+    "isArray": "This field must be an array.",
+    "minLength": "This field must be at least {constraints.0} characters long.",
+    "maxLength": "This field must not exceed {constraints.0} characters.",
+    "min": "Value must be at least {constraints.0}.",
+    "max": "Value must not exceed {constraints.0}.",
+    "isEnum": "Invalid value. Allowed values: {values}.",
+    "isOptional": "This field is optional.",
+    "matches": "This field must match the required pattern.",
+    "isAlphanumeric": "This field must contain only letters and numbers.",
+    "isPhoneNumber": "Invalid phone number format.",
+    "isCreditCard": "Invalid credit card number.",
+    "isPostalCode": "Invalid postal code format.",
+    "isISO8601": "Invalid date format. Must be ISO 8601.",
+    "isStrongPassword": "Password must contain uppercase, lowercase, numbers, and special characters."
+  }
+}

@@ -1,0 +1,17 @@
+{
+    "errors": {
+        "not_found": "Tələb olunan resurs tapılmadı.",
+        "unauthorized": "Bu əməliyyatı yerinə yetirmək üçün icazəniz yoxdur.",
+        "forbidden": "Giriş qadağandır.",
+        "bad_request": "Yanlış sorğu məlumatı.",
+        "validation_failed": "Doğrulama uğursuz oldu.",
+        "server_error": "Gözlənilməz bir səhv baş verdi. Zəhmət olmasa yenidən cəhd edin.",
+        "conflict": "Mövcud məlumatlarla ziddiyyət yarandı.",
+        "unprocessable_entity": "Sorğu düzgün formalaşdırılıb, lakin işlənə bilmədi.",
+        "too_many_requests": "Çoxlu sorğu göndərildi. Zəhmət olmasa bir az sonra yenidən cəhd edin.",
+        "service_unavailable": "Xidmət hazırda əlçatan deyil. Zəhmət olmasa bir az sonra yenidən cəhd edin.",
+        "unsupported_media_type": "Daxil edilən media növü dəstəklənmir.",
+        "method_not_allowed": "Bu resurs üçün HTTP metodu icazə verilmir.",
+        "request_timeout": "Sorğu çox uzun çəkdi. Zəhmət olmasa yenidən cəhd edin."
+    }
+}

@@ -1,0 +1,27 @@
+{
+  "validationMessages": {
+    "isNotEmpty": "Bu sahə boş ola bilməz.",
+    "isString": "Bu sahə mətn formatında olmalıdır.",
+    "isNumber": "Bu sahə rəqəm olmalıdır.",
+    "isInt": "Bu sahə tam ədəd olmalıdır.",
+    "isBoolean": "Bu sahə true və ya false olmalıdır.",
+    "isEmail": "Düzgün e-poçt ünvanı daxil edin.",
+    "isUrl": "Düzgün URL daxil edin.",
+    "isUUID": "Yanlış UUID formatı.",
+    "isDate": "Yanlış tarix formatı.",
+    "isArray": "Bu sahə massiv formatında olmalıdır.",
+    "minLength": "Bu sahə ən azı  {constraints.0} simvol olmalıdır.",
+    "maxLength": "Bu sahə maksimum  {constraints.0} simvol ola bilər.",
+    "min": "Dəyər ən azı {constraints.0} olmalıdır.",
+    "max": "Dəyər maksimum  {constraints.0} ola bilər.",
+    "isEnum": "Yanlış dəyər. İcazə verilən dəyərlər: {values}.",
+    "isOptional": "Bu sahə məcburi deyil.",
+    "matches": "Bu sahə tələb olunan nümunəyə uyğun olmalıdır.",
+    "isAlphanumeric": "Bu sahə yalnız hərflər və rəqəmlər içerməlidir.",
+    "isPhoneNumber": "Yanlış telefon nömrəsi formatı.",
+    "isCreditCard": "Yanlış kredit kartı nömrəsi.",
+    "isPostalCode": "Yanlış poçt kodu formatı.",
+    "isISO8601": "Yanlış tarix formatı. ISO 8601 formatında olmalıdır.",
+    "isStrongPassword": "Şifrə böyük, kiçik hərflər, rəqəmlər və xüsusi simvollar içerməlidir."
+  }
+}
