@@ -9,9 +9,9 @@ export class AboutController {
     constructor(
         private aboutService: AboutService
     ) { }
-    @Get()
-    get() {
-        return this.aboutService.get();
+    @Get(':slug')
+    async get(@Param('slug') slug: string) {
+        return await this.aboutService.get(slug);
     }
 
     @Post()

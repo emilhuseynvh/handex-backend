@@ -5,16 +5,15 @@ import config from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import DataSource from './config/database';
 import { AcceptLanguageResolver, I18nMiddleware, I18nModule, QueryResolver } from 'nestjs-i18n';
-import { extname, join } from 'path';
+import { join } from 'path';
 import { ClsMiddleware, ClsModule } from 'nestjs-cls';
 import { AboutModule } from './modules/content/content.module';
 import { LanguageMiddleware } from './middleware/i18n.middleware';
 import { AuthModule } from './modules/auth/auth.module';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
 import { FileModule } from './modules/upload/upload.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { MetaModule } from './modules/meta/meta.module';
+import { ConsultationModule } from './modules/consultation/consultation.module';
 
 @Module({
   imports: [
@@ -53,7 +52,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     }),
     AboutModule,
     AuthModule,
-    FileModule
+    FileModule,
+    MetaModule,
+    ConsultationModule
   ],
   controllers: [],
   providers: [AppService],

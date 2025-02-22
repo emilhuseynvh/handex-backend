@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ContentEntity } from "./content.entity";
 
 @Entity('upload')
@@ -20,4 +20,7 @@ export class UploadEntity {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    // @OneToMany(() => ContentEntity, content => content.images)
+    // content: ContentEntity;
 }

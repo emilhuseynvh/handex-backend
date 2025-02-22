@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { TranslationsEntity } from "./translations.entity";
 import { UploadEntity } from "./upload.entity";
+import { MetaEntity } from "./meta.entity";
 
 @Entity('content')
 export class ContentEntity {
@@ -16,7 +17,14 @@ export class ContentEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @OneToMany(() => MetaEntity, meta => meta.content, { cascade: true })
+    meta: MetaEntity[];
+
+    // @ManyToOne(() => UploadEntity, upload => upload.content)
+    // images: UploadEntity[];
+
     @OneToMany(() => TranslationsEntity, tranlation => tranlation.content)
     translations: TranslationsEntity[];
+    content: MetaEntity;
 
 }

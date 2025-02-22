@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ClsService } from "nestjs-cls";
 import { I18nService } from "nestjs-i18n";
@@ -8,6 +8,8 @@ import { Repository } from "typeorm";
 import { CreateAboutDto } from "./content-dto/create-content.dto";
 import { TranslationsEntity } from "src/entities/translations.entity";
 import { mapTranslation } from "src/shares/utils/translation.util";
+import { MetaEntity } from "src/entities/meta.entity";
+import { MetaService } from "../meta/meta.service";
 
 @Injectable()
 export class AboutService {
@@ -17,54 +19,71 @@ export class AboutService {
 
         @InjectRepository(TranslationsEntity)
         private translationRepo: Repository<TranslationsEntity>,
+
+
+        private metaService: MetaService,
+
         private cls: ClsService,
         private i18n: I18nService<I18nTranslations>
     ) { }
 
-    async get() {
-        let lang = this.cls.get('lang') || 'az';
+    async get(slug: string) {
+        let lang = this.cls.get('lang');
+
         const result = await this.contentRepo.find({
-            where: { translations: { lang, model: 'about' } },
-            relations: ['translations']
+            where: {
+                slug: slug,
+                translations: { lang, model: 'content' },
+                meta: { translations: { lang } }
+            },
+            relations: ['translations', 'meta.translations']
         });
 
-        return result.map(item => mapTranslation(item));
+        if(!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'))
+
+        return result.map(item => ({
+            ...mapTranslation(item),
+            meta: item.meta.map(meta => mapTranslation(meta))
+        }));
     }
 
     async create(params: CreateAboutDto) {
-        
+
         let checkSlug = await this.contentRepo.findOne({ where: { slug: params.slug } });
 
         if (checkSlug) throw new ConflictException(this.i18n.t('error.errors.conflict'));
+
+
+        let content = this.contentRepo.create({ slug: params.slug });
+        content = await this.contentRepo.save(content);
         
-
-        let about = this.contentRepo.create({slug: params.slug});
-        about = await this.contentRepo.save(about);
-
         let translations: TranslationsEntity[] = [];
 
         for (let translation of params.translations) {
+            
             translations.push(this.translationRepo.create({
                 model: 'content',
-                modelId: about.id,
                 field: 'title',
                 lang: translation.lang,
                 value: translation.title
             }));
-
+            
             translations.push(this.translationRepo.create({
                 model: 'content',
-                modelId: about.id,
                 field: 'desc',
                 lang: translation.lang,
                 value: translation.desc
             }));
-
+            
             await this.translationRepo.save(translations);
         }
-        about.translations = translations;
-
-        return await this.contentRepo.save(about);
+        
+        let meta = await this.metaService.create(params.meta[0]);
+        
+        
+        content.translations = translations;
+        content.meta = [meta];
+        return await this.contentRepo.save(content);
     }
 
     async delete(id: number) {

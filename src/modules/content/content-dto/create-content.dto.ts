@@ -1,8 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNumber, IsString, Min, MinLength, ValidateNested } from "class-validator";
+import { IsArray, IsNumber, IsString, Min, MinLength, ValidateNested } from "class-validator";
 import { i18nValidationMessage } from "nestjs-i18n";
+import { MetaEntity } from "src/entities/meta.entity";
+import { UploadEntity } from "src/entities/upload.entity";
 import { I18nTranslations } from "src/generated/i18n.generated";
+import { CreateMetaDto } from "src/modules/meta/meta-dto/create-meta.dto";
 import { Lang } from "src/shares/enums/lang.enum";
 
 class CreateAboutTranslationsDto {
@@ -31,10 +34,15 @@ export class CreateAboutDto {
     @Type()
     @IsNumber()
     @ApiProperty()
-    images: number[];
+    images: UploadEntity[];
 
     @Type()
     @IsString()
     @ApiProperty()
     slug: string
+
+    @Type()
+    @IsArray()
+    @ApiProperty()
+    meta: CreateMetaDto
 }
