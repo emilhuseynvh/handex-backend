@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsNumber, IsString, Min, MinLength, ValidateNested } from "class-validator";
+import { IsArray, IsNumber, IsString, MinLength, ValidateNested } from "class-validator";
 import { i18nValidationMessage } from "nestjs-i18n";
-import { MetaEntity } from "src/entities/meta.entity";
 import { UploadEntity } from "src/entities/upload.entity";
 import { I18nTranslations } from "src/generated/i18n.generated";
 import { CreateMetaDto } from "src/modules/meta/meta-dto/create-meta.dto";

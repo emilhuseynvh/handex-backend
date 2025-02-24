@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ClsService } from "nestjs-cls";
 import { I18nService } from "nestjs-i18n";
@@ -8,7 +8,6 @@ import { Repository } from "typeorm";
 import { CreateAboutDto } from "./content-dto/create-content.dto";
 import { TranslationsEntity } from "src/entities/translations.entity";
 import { mapTranslation } from "src/shares/utils/translation.util";
-import { MetaEntity } from "src/entities/meta.entity";
 import { MetaService } from "../meta/meta.service";
 
 @Injectable()
@@ -39,7 +38,7 @@ export class AboutService {
             relations: ['translations', 'meta.translations']
         });
 
-        if(!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'))
+        if (!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
         return result.map(item => ({
             ...mapTranslation(item),
@@ -56,31 +55,31 @@ export class AboutService {
 
         let content = this.contentRepo.create({ slug: params.slug });
         content = await this.contentRepo.save(content);
-        
+
         let translations: TranslationsEntity[] = [];
 
         for (let translation of params.translations) {
-            
+
             translations.push(this.translationRepo.create({
                 model: 'content',
                 field: 'title',
                 lang: translation.lang,
                 value: translation.title
             }));
-            
+
             translations.push(this.translationRepo.create({
                 model: 'content',
                 field: 'desc',
                 lang: translation.lang,
                 value: translation.desc
             }));
-            
+
             await this.translationRepo.save(translations);
         }
-        
+
         let meta = await this.metaService.create(params.meta[0]);
-        
-        
+
+
         content.translations = translations;
         content.meta = [meta];
         return await this.contentRepo.save(content);
