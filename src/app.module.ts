@@ -14,6 +14,7 @@ import { FileModule } from './modules/upload/upload.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MetaModule } from './modules/meta/meta.module';
 import { ConsultationModule } from './modules/consultation/consultation.module';
+import { StatisticModule } from './modules/statistics/statistic.module';
 
 @Module({
   imports: [
@@ -54,7 +55,8 @@ import { ConsultationModule } from './modules/consultation/consultation.module';
     AuthModule,
     FileModule,
     MetaModule,
-    ConsultationModule
+    ConsultationModule,
+    StatisticModule
   ],
   controllers: [],
   providers: [AppService],
