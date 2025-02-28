@@ -28,12 +28,11 @@ export class AboutService {
 
     async get(slug: string) {
         let lang = this.cls.get('lang');
+        console.log(slug);
 
         const result = await this.contentRepo.find({
             where: {
                 slug: slug,
-                translations: { lang, model: 'content' },
-                meta: { translations: { lang } }
             },
             relations: ['translations', 'meta.translations']
         });
@@ -77,8 +76,7 @@ export class AboutService {
             await this.translationRepo.save(translations);
         }
 
-        let meta = await this.metaService.create(params.meta[0]);
-
+        let meta = await this.metaService.create({ ...params.meta[0], content: content.id });
 
         content.translations = translations;
         content.meta = [meta];
