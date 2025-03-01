@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, Prima
 import { TranslationsEntity } from "./translations.entity";
 import { UploadEntity } from "./upload.entity";
 import { MetaEntity } from "./meta.entity";
+import { CoursesEntity } from "./course.entity";
 
 @Entity('content')
 export class ContentEntity {
@@ -22,6 +23,9 @@ export class ContentEntity {
 
     // @ManyToOne(() => UploadEntity, upload => upload.content)
     // images: UploadEntity[];
+
+    @ManyToOne(() => CoursesEntity, course => course.content)
+    course: CoursesEntity;
 
     @OneToMany(() => TranslationsEntity, tranlation => tranlation.content)
     translations: TranslationsEntity[];

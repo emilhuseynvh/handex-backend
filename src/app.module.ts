@@ -15,6 +15,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MetaModule } from './modules/meta/meta.module';
 import { ConsultationModule } from './modules/consultation/consultation.module';
 import { StatisticModule } from './modules/statistics/statistic.module';
+import { CourseModule } from './modules/course/course.module';
 
 @Module({
   imports: [
@@ -56,7 +57,8 @@ import { StatisticModule } from './modules/statistics/statistic.module';
     FileModule,
     MetaModule,
     ConsultationModule,
-    StatisticModule
+    StatisticModule,
+    CourseModule
   ],
   controllers: [],
   providers: [AppService],

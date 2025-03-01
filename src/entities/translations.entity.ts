@@ -2,6 +2,7 @@ import { Lang } from "src/shares/enums/lang.enum";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { ContentEntity } from "./content.entity";
 import { MetaEntity } from "./meta.entity";
+import { CoursesEntity } from "./course.entity";
 
 @Entity('translations')
 export class TranslationsEntity {
@@ -25,4 +26,7 @@ export class TranslationsEntity {
     
     @ManyToOne(() => MetaEntity, meta => meta.translations, { onDelete: 'CASCADE' })
     meta: MetaEntity;
+
+    @ManyToOne(() => CoursesEntity, course => course)
+    course: CoursesEntity
 }
