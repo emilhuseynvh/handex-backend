@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { ContentEntity } from "./content.entity";
 import { MetaEntity } from "./meta.entity";
 import { NewsEntity } from "./news.entity";
+import { CoursesEntity } from "./course.entity";
 
 @Entity('translations')
 export class TranslationsEntity {
@@ -29,4 +30,7 @@ export class TranslationsEntity {
 
     @ManyToOne(() => MetaEntity, meta => meta.translations, { onDelete: 'CASCADE' })
     meta: MetaEntity;
+
+    @ManyToOne(() => CoursesEntity, course => course)
+    course: CoursesEntity
 }

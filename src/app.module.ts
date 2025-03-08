@@ -16,6 +16,7 @@ import { MetaModule } from './modules/meta/meta.module';
 import { ConsultationModule } from './modules/consultation/consultation.module';
 import { StatisticModule } from './modules/statistics/statistic.module';
 import { NewsModule } from './modules/news/news.module';
+import { CourseModule } from './modules/course/course.module';
 
 @Module({
   imports: [
@@ -58,7 +59,8 @@ import { NewsModule } from './modules/news/news.module';
     MetaModule,
     ConsultationModule,
     StatisticModule,
-    NewsModule
+    NewsModule,
+    CourseModule
   ],
   controllers: [],
   providers: [AppService],

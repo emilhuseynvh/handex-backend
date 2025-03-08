@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 import { ContentEntity } from "./content.entity";
 import { TranslationsEntity } from "./translations.entity";
 import { NewsEntity } from "./news.entity";
+import { CoursesEntity } from "./course.entity";
 
 @Entity('meta')
 export class MetaEntity {
@@ -16,4 +17,7 @@ export class MetaEntity {
 
     @OneToMany(() => TranslationsEntity, translation => translation.meta, { cascade: true, nullable: true })
     translations: TranslationsEntity[];
+
+    @ManyToOne(() => CoursesEntity, course => course.meta)
+    course: CoursesEntity
 }
