@@ -22,8 +22,6 @@ export class CreateMetaTranslationsDto {
 }
 
 export class CreateMetaDto {
-
-
     @Type()
     @IsNumber()
     @IsOptional()
@@ -34,4 +32,10 @@ export class CreateMetaDto {
     @ValidateNested({ each: true })
     @ApiProperty({ type: CreateMetaTranslationsDto, isArray: true })
     translations: CreateMetaTranslationsDto[];
+
+    @Type()
+    @IsNumber()
+    @IsOptional()
+    @ApiProperty({default: 0})
+    news: number
 }

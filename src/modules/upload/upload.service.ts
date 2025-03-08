@@ -26,6 +26,10 @@ export class UploadService {
         return this.uploadRepo.save(newFile);
     }
 
+    async findOne(id: number) {
+        return await this.uploadRepo.findOne({ where: { id } });
+    }
+
     async deleteFile(id: number) {
         let image = await this.uploadRepo.findOne({ where: { id } });
 

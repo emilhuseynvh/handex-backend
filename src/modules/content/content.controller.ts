@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
 import { AboutService } from "./content.service";
 import { CreateAboutDto } from "./content-dto/create-content.dto";
 import { DeleteAboutDto } from "./content-dto/delete-content.dto";
-import { ApiBearerAuth, ApiParam } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiParam, ApiQuery } from "@nestjs/swagger";
+import { UpdateContentDto } from "./content-dto/update-content.dto";
 
 @Controller('content')
 export class AboutController {
@@ -10,8 +11,13 @@ export class AboutController {
         private aboutService: AboutService
     ) { }
     @Get(':slug')
-    async get(@Param('slug') slug: string) {
-        return await this.aboutService.get(slug);
+    @ApiQuery({
+        name: 'search',
+        required: false,
+        description: 'Optional search parameter'
+      })
+    async get(@Param('slug') slug: string, @Query('search') search?: string) {
+        return await this.aboutService.get(slug, search);
     }
 
     @Post()
@@ -19,6 +25,11 @@ export class AboutController {
         console.log(body.slug);
 
         return this.aboutService.create(body);
+    }
+
+    @Post(':id')
+    async update(@Param('id') id: number, @Body() body: UpdateContentDto) {
+        return await this.aboutService.update(id, body)
     }
 
     @Delete(':id')

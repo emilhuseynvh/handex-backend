@@ -7,7 +7,7 @@ import { I18nTranslations } from "src/generated/i18n.generated";
 import { CreateMetaDto } from "src/modules/meta/meta-dto/create-meta.dto";
 import { Lang } from "src/shares/enums/lang.enum";
 
-class CreateAboutTranslationsDto {
+export class CreateAboutTranslationsDto {
     @Type()
     @MinLength(3, { message: i18nValidationMessage<I18nTranslations>('validation.validationMessages.minLength') })
     @ApiProperty({ required: true })
@@ -33,7 +33,7 @@ export class CreateAboutDto {
     @Type()
     @IsNumber()
     @ApiProperty()
-    images: UploadEntity[];
+    images: number[];
 
     @Type()
     @IsString()

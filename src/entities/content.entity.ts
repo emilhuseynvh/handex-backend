@@ -20,11 +20,9 @@ export class ContentEntity {
     @OneToMany(() => MetaEntity, meta => meta.content, { cascade: true })
     meta: MetaEntity[];
 
-    // @ManyToOne(() => UploadEntity, upload => upload.content)
-    // images: UploadEntity[];
+    @ManyToOne(() => UploadEntity, upload => upload.content)
+    images: UploadEntity[];
 
     @OneToMany(() => TranslationsEntity, tranlation => tranlation.content)
     translations: TranslationsEntity[];
-    content: MetaEntity;
-
 }
