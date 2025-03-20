@@ -4,7 +4,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
+
+
+  app.enableCors({
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'localhost'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+  });
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(
