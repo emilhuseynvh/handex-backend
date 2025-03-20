@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ContentEntity } from "./content.entity";
 import { NewsEntity } from "./news.entity";
+import { GeneralEntity } from "./general.entity";
 
 @Entity('upload')
 export class UploadEntity {
@@ -25,6 +26,10 @@ export class UploadEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToMany(() => ContentEntity, content => content.images)
+    @ManyToOne(() => ContentEntity, content => content.images)
     content: ContentEntity;
+
+    @ManyToOne(() => GeneralEntity, general => general.company)
+    general: GeneralEntity;
+
 }

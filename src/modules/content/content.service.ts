@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ClsService } from "nestjs-cls";
 import { I18nService } from "nestjs-i18n";
 import { ContentEntity } from "src/entities/content.entity";
-import { I18nTranslations } from "src/generated/i18n.generated";
 import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { CreateAboutDto } from "./content-dto/create-content.dto";
 import { TranslationsEntity } from "src/entities/translations.entity";
@@ -24,11 +23,11 @@ export class AboutService {
         private metaService: MetaService,
 
         private cls: ClsService,
-        private i18n: I18nService<I18nTranslations>
+        private i18n: I18nService
     ) { }
 
     async get(slug: string, query: string) {
-        let lang = this.cls.get('lang');
+        let lang = this.cls.get('lang');        
 
         let where: FindOptionsWhere<ContentEntity> = {
             slug: slug,
@@ -47,6 +46,7 @@ export class AboutService {
             where,
             relations: ['translations', 'meta.translations']
         });
+        
 
         if (!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 

@@ -27,6 +27,7 @@ async function bootstrap() {
     .setDescription('This is the swagger for handex')
     .setVersion('1.0')
     .addTag('handex')
+    .addBearerAuth()
     .addGlobalParameters({ name: 'lang', description: 'language', allowEmptyValue: true, in: 'query' })
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);

@@ -4,9 +4,7 @@ import { MetaEntity } from "src/entities/meta.entity";
 import { Repository } from "typeorm";
 import { CreateMetaDto } from "./meta-dto/create-meta.dto";
 import { I18nService } from "nestjs-i18n";
-import { I18nTranslations } from "src/generated/i18n.generated";
 import { ClsService } from "nestjs-cls";
-import { ContentEntity } from "src/entities/content.entity";
 import { TranslationsEntity } from "src/entities/translations.entity";
 import { mapTranslation } from "src/shares/utils/translation.util";
 
@@ -15,7 +13,7 @@ export class MetaService {
     constructor(
         @InjectRepository(MetaEntity)
         private metaRepo: Repository<MetaEntity>,
-        private i18n: I18nService<I18nTranslations>,
+        private i18n: I18nService,
         @InjectRepository(TranslationsEntity)
         private translationRepo: Repository<TranslationsEntity>,
         private cls: ClsService

@@ -10,6 +10,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
+  typesOutputPath: path.join(__dirname, '../src/generated/i18n.generated.ts'),
   root: true,
   env: {
     node: true,

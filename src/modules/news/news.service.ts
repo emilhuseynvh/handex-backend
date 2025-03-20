@@ -5,7 +5,6 @@ import { Repository } from "typeorm";
 import { UploadService } from "../upload/upload.service";
 import { CreateNewsDto } from "./dto/create-news.dto";
 import { I18nService } from "nestjs-i18n";
-import { I18nTranslations } from "src/generated/i18n.generated";
 import { TranslationsEntity } from "src/entities/translations.entity";
 import { ClsService } from "nestjs-cls";
 import { mapTranslation } from "src/shares/utils/translation.util";
@@ -29,7 +28,7 @@ export class NewsService {
         private translationsRepo: Repository<TranslationsEntity>,
 
         private uploadService: UploadService,
-        private i18n: I18nService<I18nTranslations>
+        private i18n: I18nService
     ) { }
 
     async list(page: number = 0) {

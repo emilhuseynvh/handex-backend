@@ -4,7 +4,6 @@ import { I18nService } from 'nestjs-i18n';
 import { join } from 'path';
 import config from 'src/config';
 import { UploadEntity } from 'src/entities/upload.entity';
-import { I18nTranslations } from 'src/generated/i18n.generated';
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
 
@@ -13,7 +12,7 @@ export class UploadService {
     constructor(
         @InjectRepository(UploadEntity)
         private uploadRepo: Repository<UploadEntity>,
-        private i18n: I18nService<I18nTranslations>
+        private i18n: I18nService
     ) { }
 
     async create(file: Express.Multer.File) {
@@ -33,7 +32,7 @@ export class UploadService {
     async deleteFile(id: number) {
         let image = await this.uploadRepo.findOne({ where: { id } });
 
-        if (!image) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
+        if (!image) throw new NotFoundException(this.i18n.translate('error.errors.not_found'));
 
         const filePath = join(__dirname, '../../../uploads', image.filename);
 

@@ -9,6 +9,7 @@ export class NewsEntity {
     id: number;
 
     @OneToOne(() => UploadEntity, upload => upload.news)
+    @JoinColumn({ name: 'imageId' })
     image: UploadEntity;
 
     @OneToMany(() => TranslationsEntity, translations => translations.news, { cascade: true })

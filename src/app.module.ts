@@ -5,7 +5,7 @@ import config from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import DataSource from './config/database';
 import { AcceptLanguageResolver, I18nMiddleware, I18nModule, QueryResolver } from 'nestjs-i18n';
-import { join } from 'path';
+import path, { join } from 'path';
 import { ClsMiddleware, ClsModule } from 'nestjs-cls';
 import { AboutModule } from './modules/content/content.module';
 import { LanguageMiddleware } from './middleware/i18n.middleware';
@@ -17,6 +17,7 @@ import { ConsultationModule } from './modules/consultation/consultation.module';
 import { StatisticModule } from './modules/statistics/statistic.module';
 import { NewsModule } from './modules/news/news.module';
 import { CourseModule } from './modules/course/course.module';
+import { GeneralModule } from './modules/general/general.module';
 
 @Module({
   imports: [
@@ -42,7 +43,6 @@ import { CourseModule } from './modules/course/course.module';
         new QueryResolver(['lang', 'language']),
         new AcceptLanguageResolver(),
       ],
-      typesOutputPath: join(__dirname, '../src/generated/i18n.generated.ts'),
     }),
     ClsModule.forRoot({
       global: true,
@@ -60,7 +60,8 @@ import { CourseModule } from './modules/course/course.module';
     ConsultationModule,
     StatisticModule,
     NewsModule,
-    CourseModule
+    CourseModule,
+    GeneralModule
   ],
   controllers: [],
   providers: [AppService],

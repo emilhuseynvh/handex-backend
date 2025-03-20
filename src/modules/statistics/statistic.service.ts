@@ -4,7 +4,6 @@ import { StatisticsEntity } from "src/entities/statistics.entity";
 import { Repository } from "typeorm";
 import { CreateStatisticsDto } from "./statistics-dto/create-statistics.dto";
 import { UpdateStatisticsDto } from "./statistics-dto/update-statistics.dto";
-import { I18nTranslations } from "src/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
 
 @Injectable()
@@ -12,7 +11,7 @@ export class StatisticsService {
     constructor(
         @InjectRepository(StatisticsEntity)
         private statisticRepo: Repository<StatisticsEntity>,
-        private i18n: I18nService<I18nTranslations>
+        private i18n: I18nService
     ) { }
 
     async list() {

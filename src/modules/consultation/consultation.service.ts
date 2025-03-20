@@ -5,14 +5,13 @@ import { Repository } from "typeorm";
 import { CreateConsultationDto } from "./consultation-dto/create-consultation.dto";
 import { UpdateConsultationDto } from "./consultation-dto/update-consultation.dto";
 import { I18nService } from "nestjs-i18n";
-import { I18nTranslations } from "src/generated/i18n.generated";
 
 @Injectable()
 export class ConsultationService {
     constructor(
         @InjectRepository(ConsultationEntity)
         private consultationRepo: Repository<ConsultationEntity>,
-        private i18n: I18nService<I18nTranslations>
+        private i18n: I18nService
     ) { }
 
     async list() {
