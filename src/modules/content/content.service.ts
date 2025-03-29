@@ -3,21 +3,25 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ClsService } from "nestjs-cls";
 import { I18nService } from "nestjs-i18n";
 import { ContentEntity } from "src/entities/content.entity";
-import { FindOptionsWhere, ILike, Repository } from "typeorm";
+import { FindOptionsWhere, ILike, In, Repository } from "typeorm";
 import { CreateAboutDto } from "./content-dto/create-content.dto";
 import { TranslationsEntity } from "src/entities/translations.entity";
 import { mapTranslation } from "src/shares/utils/translation.util";
 import { MetaService } from "../meta/meta.service";
 import { UpdateContentDto } from "./content-dto/update-content.dto";
+import { UploadEntity } from "src/entities/upload.entity";
 
 @Injectable()
-export class AboutService {
+export class ContentService {
     constructor(
         @InjectRepository(ContentEntity)
         private contentRepo: Repository<ContentEntity>,
 
         @InjectRepository(TranslationsEntity)
         private translationRepo: Repository<TranslationsEntity>,
+
+        @InjectRepository(UploadEntity)
+        private uploadRepo: Repository<UploadEntity>,
 
 
         private metaService: MetaService,
@@ -27,7 +31,7 @@ export class AboutService {
     ) { }
 
     async get(slug: string, query: string) {
-        let lang = this.cls.get('lang');        
+        let lang = this.cls.get('lang');
 
         let where: FindOptionsWhere<ContentEntity> = {
             slug: slug,
@@ -44,9 +48,9 @@ export class AboutService {
 
         const result = await this.contentRepo.find({
             where,
-            relations: ['translations', 'meta.translations']
+            relations: ['translations', 'meta.translations', 'images']
         });
-        
+
 
         if (!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
@@ -63,7 +67,6 @@ export class AboutService {
         let translations: TranslationsEntity[] = [];
 
         for (let translation of params.translations) {
-
             translations.push(this.translationRepo.create({
                 model: 'content',
                 field: 'title',
@@ -77,14 +80,22 @@ export class AboutService {
                 lang: translation.lang,
                 value: translation.desc
             }));
-
-            await this.translationRepo.save(translations);
         }
+
+        await this.translationRepo.save(translations);
 
         let meta = await this.metaService.create({ ...params.meta[0], content: content.id });
 
+        if (params.images) {
+            const images = await this.uploadRepo.findBy({
+                id: In(params.images)
+            });
+            content.images = images;
+        }
+
         content.translations = translations;
         content.meta = [meta];
+
         return await this.contentRepo.save(content);
     }
 

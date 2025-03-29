@@ -1,10 +1,7 @@
-// import { applyDecorators, UseGuards } from "@nestjs/common";
-// import { ApiBearerAuth } from "@nestjs/swagger";
-// import { AuthGuard } from "../guards/auth.guard";
+import { applyDecorators, UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { UserRole } from '../enums/user.enum';
 
-// export function Auth() {
-//     return applyDecorators(
-//         UseGuards(AuthGuard),
-//         ApiBearerAuth()
-//     );
-// }
+export const Auth = () =>
+  applyDecorators(UseGuards(AuthGuard), ApiBearerAuth());

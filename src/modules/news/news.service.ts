@@ -10,6 +10,7 @@ import { ClsService } from "nestjs-cls";
 import { mapTranslation } from "src/shares/utils/translation.util";
 import { MetaEntity } from "src/entities/meta.entity";
 import { MetaService } from "../meta/meta.service";
+import { UploadEntity } from "src/entities/upload.entity";
 
 @Injectable()
 export class NewsService {
@@ -24,8 +25,8 @@ export class NewsService {
 
         private metaService: MetaService,
 
-        @InjectRepository(TranslationsEntity)
-        private translationsRepo: Repository<TranslationsEntity>,
+        @InjectRepository(UploadEntity)
+        private uploadRepo: Repository<UploadEntity>,
 
         private uploadService: UploadService,
         private i18n: I18nService
@@ -52,7 +53,7 @@ export class NewsService {
                 },
                 image: {
                     id: true,
-                    path: true
+                    url: true
                 },
                 meta: {
                     id: true,
@@ -95,7 +96,7 @@ export class NewsService {
                 },
                 image: {
                     id: true,
-                    path: true
+                    url: true
                 }
             },
             relations: ['translations', 'image']
@@ -105,14 +106,14 @@ export class NewsService {
     }
 
     async create(params: CreateNewsDto) {
-        let image = await this.uploadService.findOne(params.image);
+        let image = await this.uploadRepo.findOne({ where: { id: params.image } });
 
         if (!image) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
         let news = this.newsRepo.create({
             image,
         });
-        
+
         await this.newsRepo.save(news);
 
         let translations = [];

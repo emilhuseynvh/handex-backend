@@ -8,10 +8,11 @@ import { UploadService } from "../upload/upload.service";
 import { UploadEntity } from "src/entities/upload.entity";
 import { MetaEntity } from "src/entities/meta.entity";
 import { MetaService } from "../meta/meta.service";
+import { CloudinaryService } from "src/libs/cloudinary/cloudinary.service";
 
 @Module({
     imports: [TypeOrmModule.forFeature([NewsEntity, TranslationsEntity, UploadEntity, MetaEntity])],
     controllers: [NewsController],
-    providers: [NewsService, UploadService, MetaService],
+    providers: [NewsService, UploadService, MetaService, CloudinaryService],
 })
 export class NewsModule { }

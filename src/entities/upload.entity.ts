@@ -1,21 +1,15 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ContentEntity } from "./content.entity";
 import { NewsEntity } from "./news.entity";
 import { GeneralEntity } from "./general.entity";
 
 @Entity('upload')
-export class UploadEntity {
+export class UploadEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    filename: string;
-
-    @Column()
-    path: string;
-
-    @Column()
-    mimetype: string;
+    url: string;
 
     @OneToOne(() => NewsEntity, news => news.image)
     news: NewsEntity;
@@ -26,7 +20,7 @@ export class UploadEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @ManyToOne(() => ContentEntity, content => content.images)
+    @ManyToMany(() => ContentEntity, content => content.images, { onDelete: 'CASCADE' })
     content: ContentEntity;
 
     @ManyToOne(() => GeneralEntity, general => general.company)

@@ -1,35 +1,34 @@
-import { Controller, Delete, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { memoryStorage } from 'multer';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { UploadService } from './upload.service';
-import { UploadInterceptor } from 'src/shares/interceptors/upload.interceptor';
+import { UploadImageDto } from './dto/upload.dto';
+import { imageFileFilter } from 'src/shares/utils/upload-filter.util';
+import { UPLOAD_IMAGE_MAX_SIZE } from 'src/shares/constants/upload.constants';
 
-@Controller('file')
+@Controller('upload')
 export class UploadController {
-  constructor(private readonly uploadService: UploadService) { }
+  constructor(private uploadService: UploadService) { }
 
-  @Post('upload')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
+  @Post('image')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: memoryStorage(),
+      fileFilter: imageFileFilter,
+      limits: {
+        fileSize: UPLOAD_IMAGE_MAX_SIZE,
       },
-    },
-  })
-  @UseInterceptors(UploadInterceptor.getInterceptor())
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return this.uploadService.create(file);
-  }
-
-  @Delete(':id')
-  deleteFile(@Param('id') id: number) {
-    return this.uploadService.deleteFile(id);
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UploadImageDto })
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return this.uploadService.uploadImage(file);
   }
 }

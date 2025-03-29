@@ -1,49 +1,35 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { I18nService } from 'nestjs-i18n';
-import { join } from 'path';
-import config from 'src/config';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { UploadEntity } from 'src/entities/upload.entity';
-import { Repository } from 'typeorm';
-import * as fs from 'fs';
+import { CloudinaryService } from 'src/libs/cloudinary/cloudinary.service';
+import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class UploadService {
-    constructor(
-        @InjectRepository(UploadEntity)
-        private uploadRepo: Repository<UploadEntity>,
-        private i18n: I18nService
-    ) { }
+  private imageRepo: Repository<UploadEntity>;
 
-    async create(file: Express.Multer.File) {
-        const newFile = this.uploadRepo.create({
-            filename: file.filename,
-            path: config.url + file.path,
-            mimetype: file.mimetype,
-        });
+  constructor(
+    private cloudinaryService: CloudinaryService,
+    @InjectDataSource() private dataSoruce: DataSource,
+  ) {
+    this.imageRepo = this.dataSoruce.getRepository(UploadEntity);
+  }
 
-        return this.uploadRepo.save(newFile);
+  async uploadImage(file: Express.Multer.File) {
+    try {
+      const result = await this.cloudinaryService.uploadFile(file);
+      if (!result?.url) throw new Error();
+
+      const image = this.imageRepo.create({
+        url: result.url,
+      });
+
+      await image.save();
+
+      return image;
+    } catch (err) {
+        console.log(err);
+      throw new BadRequestException('Something went wrong');
     }
-
-    async findOne(id: number) {
-        return await this.uploadRepo.findOne({ where: { id } });
-    }
-
-    async deleteFile(id: number) {
-        let image = await this.uploadRepo.findOne({ where: { id } });
-
-        if (!image) throw new NotFoundException(this.i18n.translate('error.errors.not_found'));
-
-        const filePath = join(__dirname, '../../../uploads', image.filename);
-
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-
-        await this.uploadRepo.delete(id);
-
-        return {
-            message: this.i18n.t('response.deleted')
-        };
-    }
+  }
 }

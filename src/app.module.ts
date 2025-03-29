@@ -7,7 +7,6 @@ import DataSource from './config/database';
 import { AcceptLanguageResolver, I18nMiddleware, I18nModule, QueryResolver } from 'nestjs-i18n';
 import path, { join } from 'path';
 import { ClsMiddleware, ClsModule } from 'nestjs-cls';
-import { AboutModule } from './modules/content/content.module';
 import { LanguageMiddleware } from './middleware/i18n.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { FileModule } from './modules/upload/upload.module';
@@ -18,6 +17,8 @@ import { StatisticModule } from './modules/statistics/statistic.module';
 import { NewsModule } from './modules/news/news.module';
 import { CourseModule } from './modules/course/course.module';
 import { GeneralModule } from './modules/general/general.module';
+import { ContentModule } from './modules/content/content.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -53,7 +54,7 @@ import { GeneralModule } from './modules/general/general.module';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
-    AboutModule,
+    ContentModule,
     AuthModule,
     FileModule,
     MetaModule,
@@ -61,7 +62,8 @@ import { GeneralModule } from './modules/general/general.module';
     StatisticModule,
     NewsModule,
     CourseModule,
-    GeneralModule
+    GeneralModule,
+    UserModule
   ],
   controllers: [],
   providers: [AppService],

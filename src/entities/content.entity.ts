@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { TranslationsEntity } from "./translations.entity";
 import { UploadEntity } from "./upload.entity";
 import { MetaEntity } from "./meta.entity";
@@ -21,7 +21,8 @@ export class ContentEntity {
     @OneToMany(() => MetaEntity, meta => meta.content, { cascade: true })
     meta: MetaEntity[];
 
-    @ManyToOne(() => UploadEntity, upload => upload.content)
+    @ManyToMany(() => UploadEntity, upload => upload.content, { cascade: true })
+    @JoinTable()
     images: UploadEntity[];
 
     @ManyToOne(() => CoursesEntity, course => course.content)

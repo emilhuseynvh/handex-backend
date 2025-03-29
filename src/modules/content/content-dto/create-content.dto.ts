@@ -30,7 +30,7 @@ export class CreateAboutDto {
     translations: CreateAboutTranslationsDto[];
 
     @Type()
-    @IsNumber()
+    @IsArray()
     @ApiProperty()
     images: number[];
 
