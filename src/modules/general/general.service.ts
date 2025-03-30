@@ -17,7 +17,25 @@ export class GeneralService {
     ) { }
 
     async list() {
-        let result = await this.generalRepo.find();
+        let result = await this.generalRepo.find({
+            select: {
+                id: true,
+                statistics: {
+                    workers: true,
+                    students: true,
+                    teachers: true,
+                    certificates: true
+                },
+                phone: true,
+                location: true,
+                email: true,
+                company: {
+                    id: true,
+                    url: true
+                }
+            },
+            relations: ['company']
+        });
 
         if (!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 

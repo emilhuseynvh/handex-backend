@@ -24,7 +24,7 @@ export class GeneralEntity {
     @Column({ nullable: true })
     email: string;
 
-    @OneToMany(() => UploadEntity, upload => upload.general, { eager: true, nullable: true, cascade: true })
+    @OneToMany(() => UploadEntity, upload => upload.general, { nullable: true, cascade: true })
     company: UploadEntity[];
 
 }
