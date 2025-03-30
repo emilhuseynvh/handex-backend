@@ -3,6 +3,7 @@ import { ContentEntity } from "./content.entity";
 import { NewsEntity } from "./news.entity";
 import { GeneralEntity } from "./general.entity";
 import { CustomersEntity } from "./customers.entity";
+import { ProfilesEntity } from "./profile.entity";
 
 @Entity('upload')
 export class UploadEntity extends BaseEntity {
@@ -17,6 +18,9 @@ export class UploadEntity extends BaseEntity {
 
     @OneToOne(() => CustomersEntity, customers => customers.bank_logo)
     bank_logo: CustomersEntity
+
+    @OneToOne(() => ProfilesEntity, profile => profile.image)
+    profile: ProfilesEntity
     
     @OneToOne(() => CustomersEntity, customers => customers.customer_profile)
     customer_profile: CustomersEntity

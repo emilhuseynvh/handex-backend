@@ -20,6 +20,7 @@ import { GeneralModule } from './modules/general/general.module';
 import { ContentModule } from './modules/content/content.module';
 import { UserModule } from './modules/user/user.module';
 import { CustomersModule } from './modules/customers/customers.module';
+import { ProfilesModule } from './modules/profiles/profiles.module';
 
 @Module({
   imports: [
@@ -65,7 +66,8 @@ import { CustomersModule } from './modules/customers/customers.module';
     CourseModule,
     GeneralModule,
     UserModule,
-    CustomersModule
+    CustomersModule,
+    ProfilesModule
   ],
   controllers: [],
   providers: [AppService],
