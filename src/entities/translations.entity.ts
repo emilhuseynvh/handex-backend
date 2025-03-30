@@ -4,6 +4,7 @@ import { ContentEntity } from "./content.entity";
 import { MetaEntity } from "./meta.entity";
 import { NewsEntity } from "./news.entity";
 import { CoursesEntity } from "./course.entity";
+import { CustomersEntity } from "./customers.entity";
 
 @Entity('translations')
 export class TranslationsEntity {
@@ -25,6 +26,9 @@ export class TranslationsEntity {
     @ManyToOne(() => ContentEntity, content => content.translations, { onDelete: 'CASCADE' })
     content: ContentEntity;
 
+    @ManyToOne(() => CustomersEntity, customer => customer.translations, { onDelete: 'CASCADE' })
+    customers: CustomersEntity;
+
     @ManyToOne(() => NewsEntity, news => news.translations, { onDelete: 'CASCADE' })
     news: NewsEntity;
 
@@ -32,5 +36,5 @@ export class TranslationsEntity {
     meta: MetaEntity;
 
     @ManyToOne(() => CoursesEntity, course => course)
-    course: CoursesEntity
+    course: CoursesEntity;
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsNumber, IsString, MinLength, ValidateNested } from "class-validator";
+import { IsArray, IsEnum, IsNumber, IsString, MinLength, ValidateNested } from "class-validator";
 import { i18nValidationMessage } from "nestjs-i18n";
 import { UploadEntity } from "src/entities/upload.entity";
 import { CreateMetaDto } from "src/modules/meta/meta-dto/create-meta.dto";
@@ -20,6 +20,7 @@ export class CreateAboutTranslationsDto {
     @Type()
     @MinLength(1, { message: i18nValidationMessage('validation.validationMessages.minLength') })
     @ApiProperty({ required: true })
+    @IsEnum(Lang)
     lang: Lang;
 }
 

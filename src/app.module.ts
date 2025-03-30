@@ -19,6 +19,7 @@ import { CourseModule } from './modules/course/course.module';
 import { GeneralModule } from './modules/general/general.module';
 import { ContentModule } from './modules/content/content.module';
 import { UserModule } from './modules/user/user.module';
+import { CustomersModule } from './modules/customers/customers.module';
 
 @Module({
   imports: [
@@ -63,7 +64,8 @@ import { UserModule } from './modules/user/user.module';
     NewsModule,
     CourseModule,
     GeneralModule,
-    UserModule
+    UserModule,
+    CustomersModule
   ],
   controllers: [],
   providers: [AppService],

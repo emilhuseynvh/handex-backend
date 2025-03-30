@@ -2,6 +2,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, On
 import { ContentEntity } from "./content.entity";
 import { NewsEntity } from "./news.entity";
 import { GeneralEntity } from "./general.entity";
+import { CustomersEntity } from "./customers.entity";
 
 @Entity('upload')
 export class UploadEntity extends BaseEntity {
@@ -13,6 +14,12 @@ export class UploadEntity extends BaseEntity {
 
     @OneToOne(() => NewsEntity, news => news.image)
     news: NewsEntity;
+
+    @OneToOne(() => CustomersEntity, customers => customers.bank_logo)
+    bank_logo: CustomersEntity
+    
+    @OneToOne(() => CustomersEntity, customers => customers.customer_profile)
+    customer_profile: CustomersEntity
 
     @CreateDateColumn()
     createdAt: Date;
