@@ -4,6 +4,7 @@ import { NewsEntity } from "./news.entity";
 import { GeneralEntity } from "./general.entity";
 import { CustomersEntity } from "./customers.entity";
 import { ProfilesEntity } from "./profile.entity";
+import { StudyAreaEntity } from "./studyArea.entity";
 
 @Entity('upload')
 export class UploadEntity extends BaseEntity {
@@ -16,14 +17,17 @@ export class UploadEntity extends BaseEntity {
     @OneToOne(() => NewsEntity, news => news.image)
     news: NewsEntity;
 
+    @OneToOne(() => StudyAreaEntity, study => study.image)
+    studyArea: StudyAreaEntity;
+
     @OneToOne(() => CustomersEntity, customers => customers.bank_logo)
-    bank_logo: CustomersEntity
+    bank_logo: CustomersEntity;
 
     @OneToOne(() => ProfilesEntity, profile => profile.image)
-    profile: ProfilesEntity
-    
+    profile: ProfilesEntity;
+
     @OneToOne(() => CustomersEntity, customers => customers.customer_profile)
-    customer_profile: CustomersEntity
+    customer_profile: CustomersEntity;
 
     @CreateDateColumn()
     createdAt: Date;

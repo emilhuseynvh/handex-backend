@@ -21,6 +21,7 @@ import { ContentModule } from './modules/content/content.module';
 import { UserModule } from './modules/user/user.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
+import { StudyAreaModule } from './modules/studyArea/studyArea.module';
 
 @Module({
   imports: [
@@ -67,7 +68,8 @@ import { ProfilesModule } from './modules/profiles/profiles.module';
     GeneralModule,
     UserModule,
     CustomersModule,
-    ProfilesModule
+    ProfilesModule,
+    StudyAreaModule
   ],
   controllers: [],
   providers: [AppService],
