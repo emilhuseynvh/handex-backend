@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
-import { ContentEntity } from "src/entities/content.entity";
 import { Lang } from "src/shares/enums/lang.enum";
 
 export class CreateMetaTranslationsDto {
@@ -17,17 +16,11 @@ export class CreateMetaTranslationsDto {
 
     @Type()
     @IsString()
-    @ApiProperty({ required: true })
+    @ApiProperty({ required: true, default: 'az' })
     lang: Lang;
 }
 
 export class CreateMetaDto {
-    @Type()
-    @IsNumber()
-    @IsOptional()
-    @ApiProperty({ default: 1 })
-    content?: ContentEntity;
-
     @Type(() => CreateMetaTranslationsDto)
     @ValidateNested({ each: true })
     @ApiProperty({ type: CreateMetaTranslationsDto, isArray: true })
@@ -38,4 +31,10 @@ export class CreateMetaDto {
     @IsOptional()
     @ApiProperty({default: 0})
     news: number
+
+    @Type()
+    @IsString()
+    @IsOptional()
+    @ApiProperty({default: 'home'})
+    slug: string
 }

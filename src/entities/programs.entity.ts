@@ -1,9 +1,9 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TranslationsEntity } from "./translations.entity";
 import { StudyAreaEntity } from "./studyArea.entity";
 
 @Entity('programs')
-export class ProgramEntity {
+export class ProgramEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

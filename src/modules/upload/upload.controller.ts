@@ -1,34 +1,64 @@
-import {
-  Controller,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { Body, Controller, FileTypeValidator, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseInterceptors, } from '@nestjs/common';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { UploadService } from './upload.service';
-import { UploadImageDto } from './dto/upload.dto';
-import { imageFileFilter } from 'src/shares/utils/upload-filter.util';
-import { UPLOAD_IMAGE_MAX_SIZE } from 'src/shares/constants/upload.constants';
+import { Auth } from 'src/shares/decorators/auth.decorator';
 
 @Controller('upload')
 export class UploadController {
   constructor(private uploadService: UploadService) { }
 
-  @Post('image')
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: memoryStorage(),
-      fileFilter: imageFileFilter,
-      limits: {
-        fileSize: UPLOAD_IMAGE_MAX_SIZE,
-      },
-    }),
-  )
+  @Post('single')
+  @Auth()
+  @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadImageDto })
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return this.uploadService.uploadImage(file);
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        alt: {
+          type: 'string',
+          example: 'A description of the image',
+        },
+      },
+    },
+  })
+  async uploadSingleFile(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.uploadService.saveFile(file);
+  }
+
+  @Post('multiple')
+  @Auth()
+  @UseInterceptors(FilesInterceptor('files', 10))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        files: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  async uploadMultipleFiles(@UploadedFiles() files: Express.Multer.File[]) {
+    return this.uploadService.saveFiles(files);
   }
 }

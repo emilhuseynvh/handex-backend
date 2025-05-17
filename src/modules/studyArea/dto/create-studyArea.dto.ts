@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsArray, IsEnum, IsNumber, IsString } from "class-validator";
+import { CreateFaqTranslationsDto } from "src/modules/faq/dto/create-faq.dto";
+import { CreateMetaDto } from "src/modules/meta/meta-dto/create-meta.dto";
 import { Lang } from "src/shares/enums/lang.enum";
 
 export class CreateStudyAreaTranslationsDto {
@@ -35,7 +37,7 @@ export class CreateProgramTranslationsDto {
 export class CreateProgramDto {
     @Type()
     @IsString()
-    @ApiProperty({ default: '5 ay, həftədə 3 dəfə' })
+    @ApiProperty({ default: 'Backend' })
     name: string;
 
     @Type(() => CreateProgramTranslationsDto)
@@ -44,22 +46,6 @@ export class CreateProgramDto {
     translations: CreateProgramTranslationsDto[];
 }
 
-export class CreateFaqTranslationsDto {
-    @Type()
-    @IsString()
-    @ApiProperty({ default: 'title' })
-    title: string;
-
-    @Type()
-    @IsString()
-    @ApiProperty({ default: 'Xeber1' })
-    description: string;
-
-    @Type()
-    @IsEnum(Lang)
-    @ApiProperty({ default: Lang.AZ })
-    lang: Lang;
-}
 
 export class CreateStudyAreaDto {
     @Type()
@@ -71,6 +57,11 @@ export class CreateStudyAreaDto {
     @IsString()
     @ApiProperty({ default: 'back-end' })
     slug: string;
+
+    @Type()
+    @IsString()
+    @ApiProperty({ default: '#DE465D' })
+    color: string
 
     @Type()
     @IsNumber()
@@ -91,4 +82,9 @@ export class CreateStudyAreaDto {
     @IsArray()
     @ApiProperty({ type: [CreateProgramDto] })
     program: CreateProgramDto[];
+
+    @Type(() => CreateMetaDto)
+    @IsArray()
+    @ApiProperty({ type: [CreateMetaDto] })
+    meta: CreateMetaDto[];
 }

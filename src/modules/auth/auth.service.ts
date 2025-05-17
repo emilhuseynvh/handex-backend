@@ -4,8 +4,7 @@ import { UserEntity } from "src/entities/user.entity";
 import { Repository } from "typeorm";
 import { RegisterAuthDto } from "./auth-dto/register-auth.dto";
 import { I18nService } from "nestjs-i18n";
-// import { I18nTranslations } from "src/generated/i18n.generated";
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { LoginAuthDto } from "./auth-dto/login-auth.dto";
 import { JwtService } from "@nestjs/jwt";
 

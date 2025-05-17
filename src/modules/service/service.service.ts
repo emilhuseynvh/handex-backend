@@ -1,0 +1,327 @@
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { UploadService } from "../upload/upload.service";
+import { I18nService } from "nestjs-i18n";
+import { ClsService } from "nestjs-cls";
+import { mapTranslation } from "src/shares/utils/translation.util";
+import { MetaEntity } from "src/entities/meta.entity";
+import { MetaService } from "../meta/meta.service";
+import { UploadEntity } from "src/entities/upload.entity";
+import { ServiceEntity } from "src/entities/service.entity";
+import { CreateServiceDto } from "./dto/create-service.dto";
+import { UpdateServiceDto } from "./dto/update-service.dto";
+
+@Injectable()
+export class ServiceService {
+    constructor(
+        @InjectRepository(ServiceEntity)
+        private serviceRepo: Repository<ServiceEntity>,
+
+        @InjectRepository(MetaEntity)
+        private metaRepo: Repository<MetaEntity>,
+
+        private cls: ClsService,
+
+        private metaService: MetaService,
+
+        @InjectRepository(UploadEntity)
+        private uploadRepo: Repository<UploadEntity>,
+
+        private uploadService: UploadService,
+        private i18n: I18nService
+    ) { }
+
+    async list(page: number = 0) {
+        let lang = this.cls.get('lang');
+
+        let [result, total] = await this.serviceRepo.findAndCount({
+            where: {
+                translations: { lang },
+                meta: { translations: { lang, model: 'meta' } }
+            },
+            take: 8,
+            skip: page * 8,
+            order: { createdAt: 'DESC' },
+            select: {
+                id: true,
+                createdAt: true,
+                slug: true,
+                translations: {
+                    id: true,
+                    field: true,
+                    value: true,
+                    lang: true,
+                },
+                image: {
+                    id: true,
+                    url: true
+                },
+                meta: {
+                    id: true,
+                    translations: {
+                        id: true,
+                        lang: true,
+                        value: true,
+                        field: true,
+                    }
+                }
+            },
+            relations: ['translations', 'image', 'meta', 'meta.translations']
+        });
+
+        result = result.map(item => mapTranslation(item));
+
+        return {
+            data: result,
+            currentPage: page,
+            totalPages: Math.ceil(total / 12),
+            totalItems: total,
+        };
+    }
+
+    async findOne(slug: string) {
+        let lang = this.cls.get('lang');
+        let result = await this.serviceRepo.findOne({
+            where: {
+                slug,
+                translations: {
+                    lang
+                },
+                meta: {
+                    translations: {
+                        lang
+                    }
+                }
+            },
+            select: {
+                id: true,
+                createdAt: true,
+                slug: true,
+                translations: {
+                    id: true,
+                    field: true,
+                    value: true,
+                    lang: true,
+                },
+                image: {
+                    id: true,
+                    url: true
+                },
+                meta: {
+                    id: true,
+                    translations: {
+                        id: true,
+                        lang: true,
+                        value: true,
+                        field: true,
+                    }
+                }
+            },
+            relations: ['translations', 'image', 'meta', 'meta.translations']
+        });
+        if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
+
+        return mapTranslation(result);
+    }
+
+    async create(params: CreateServiceDto) {
+        let image = await this.uploadRepo.findOne({ where: { id: params.image } });
+
+        if (!image) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
+
+        let service = this.serviceRepo.create({
+            image,
+            slug: params.slug
+        });
+
+        let check = await this.serviceRepo.findOne({ where: { slug: params.slug } });
+
+        if (check) throw new ConflictException(`Blog in the ${params.slug} slug is exists`);
+
+        await this.serviceRepo.save(service);
+
+        let translations = [];
+
+        for (let translation of params.translations) {
+            translations.push({
+                model: 'service',
+                lang: translation.lang,
+                field: 'title',
+                value: translation.title
+            });
+
+            translations.push({
+                model: 'service',
+                lang: translation.lang,
+                field: 'description',
+                value: translation.description
+            });
+        }
+
+        let metaTranslations = [];
+
+        for (let meta of params.meta) {
+            meta.translations.forEach((translation) => {
+                console.log(translation.name);
+
+                metaTranslations.push({
+                    model: 'meta',
+                    field: 'name',
+                    lang: translation.lang,
+                    value: translation.name,
+                });
+
+                metaTranslations.push({
+                    model: 'meta',
+                    field: 'value',
+                    lang: translation.lang,
+                    value: translation.value,
+                });
+            });
+        }
+
+        let meta = this.metaRepo.create({ translations: metaTranslations, service: service.id, slug: 'service' } as any);
+
+        service.translations = translations;
+        service.meta = [meta] as any;
+
+        await this.serviceRepo.save(service);
+
+        return service;
+    }
+
+    async update(id: number, params: UpdateServiceDto) {
+        let service = await this.serviceRepo.findOne({
+            where: { id },
+            relations: ['translations', 'image', 'meta', 'meta.translations']
+        });
+
+        if (!service) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
+
+        if (params.image) {
+            const image = await this.uploadRepo.findOne({ where: { id: params.image } });
+            if (!image) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
+            service.image = image;
+        }
+
+        if (params.slug) {
+            service.slug = params.slug;
+        }
+
+        await this.serviceRepo.save(service);
+
+        if (params.translations && params.translations.length > 0) {
+            const existingTranslations = service.translations || [];
+
+            for (const translation of params.translations) {
+                const lang = translation.lang;
+
+                const existingTitleTranslation = existingTranslations.find(
+                    t => t.lang === lang && t.field === 'title'
+                );
+
+                if (existingTitleTranslation) {
+                    existingTitleTranslation.value = translation.title;
+                    await this.serviceRepo.manager.save(existingTitleTranslation);
+                } else {
+                    const newTitleTranslation: any = {
+                        model: 'service',
+                        lang: lang,
+                        field: 'title',
+                        value: translation.title,
+                        entityId: service.id
+                    };
+                    service.translations.push(newTitleTranslation);
+                }
+
+                const existingDescTranslation = existingTranslations.find(
+                    t => t.lang === lang && t.field === 'description'
+                );
+
+                if (existingDescTranslation) {
+                    existingDescTranslation.value = translation.description;
+                    await this.serviceRepo.manager.save(existingDescTranslation);
+                } else {
+                    const newDescTranslation: any = {
+                        model: 'service',
+                        lang: lang,
+                        field: 'description',
+                        value: translation.description,
+                        entityId: service.id
+                    };
+                    service.translations.push(newDescTranslation);
+                }
+            }
+        }
+
+        if (params.meta && params.meta.length > 0) {
+            let meta = service.meta && service.meta.length > 0 ? service.meta[0] : null;
+
+            if (!meta) {
+                meta = this.metaRepo.create({ service: service.id, slug: 'service' } as any) as any;
+                await this.metaRepo.save(meta);
+            }
+
+            for (const metaData of params.meta) {
+                for (const translation of metaData.translations) {
+                    const lang = translation.lang;
+
+                    if (meta.translations) {
+                        const existingNameTrans = meta.translations.find(
+                            t => t.lang === lang && t.field === 'name'
+                        );
+
+                        if (existingNameTrans) {
+                            existingNameTrans.value = translation.name;
+                            await this.metaRepo.manager.save(existingNameTrans);
+                        } else {
+                            const newNameTrans: any = {
+                                model: 'meta',
+                                lang: lang,
+                                field: 'name',
+                                value: translation.name,
+                                entityId: meta.id
+                            };
+                            meta.translations.push(newNameTrans);
+                        }
+
+                        const existingValueTrans = meta.translations.find(
+                            t => t.lang === lang && t.field === 'value'
+                        );
+
+                        if (existingValueTrans) {
+                            existingValueTrans.value = translation.value;
+                            await this.metaRepo.manager.save(existingValueTrans);
+                        } else {
+                            const newValueTrans: any = {
+                                model: 'meta',
+                                lang: lang,
+                                field: 'value',
+                                value: translation.value,
+                                entityId: meta.id
+                            };
+                            meta.translations.push(newValueTrans);
+                        }
+                    }
+                }
+            }
+
+            await this.metaRepo.save(meta);
+        }
+
+        await this.serviceRepo.save(service);
+
+        return service;
+    }
+
+    async delete(id: number) {
+        let result = await this.serviceRepo.delete(id);
+
+        if (!result.affected) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
+
+        return {
+            message: this.i18n.t('response.deleted')
+        };
+    }
+}

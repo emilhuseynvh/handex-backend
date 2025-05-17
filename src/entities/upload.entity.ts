@@ -5,6 +5,10 @@ import { GeneralEntity } from "./general.entity";
 import { CustomersEntity } from "./customers.entity";
 import { ProfilesEntity } from "./profile.entity";
 import { StudyAreaEntity } from "./studyArea.entity";
+import { BlogsEntity } from "./blogs.entity";
+import { ProjectEntity } from "./project.entity";
+import { ServiceEntity } from "./service.entity";
+import { AboutEntity } from "./about.entity";
 
 @Entity('upload')
 export class UploadEntity extends BaseEntity {
@@ -14,8 +18,23 @@ export class UploadEntity extends BaseEntity {
     @Column()
     url: string;
 
-    @OneToOne(() => NewsEntity, news => news.image)
+    @Column({ nullable: true })
+    alt: string
+
+    @OneToMany(() => NewsEntity, news => news.image)
     news: NewsEntity;
+
+    @OneToMany(() => ServiceEntity, service => service.image)
+    service: ServiceEntity;
+
+    @OneToMany(() => NewsEntity, project => project.image)
+    project: ProjectEntity;
+
+    @ManyToOne(() => AboutEntity, about => about.images, { onDelete: 'CASCADE' })
+    about: AboutEntity;
+
+    @OneToMany(() => BlogsEntity, blogs => blogs.image)
+    blogs: NewsEntity;
 
     @OneToOne(() => StudyAreaEntity, study => study.image)
     studyArea: StudyAreaEntity;

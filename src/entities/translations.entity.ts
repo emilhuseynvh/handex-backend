@@ -7,6 +7,11 @@ import { CoursesEntity } from "./course.entity";
 import { CustomersEntity } from "./customers.entity";
 import { StudyAreaEntity } from "./studyArea.entity";
 import { ProgramEntity } from "./programs.entity";
+import { BlogsEntity } from "./blogs.entity";
+import { ProjectEntity } from "./project.entity";
+import { ServiceEntity } from "./service.entity";
+import { FaqEntity } from "./faq.entity";
+import { SideEntity } from "./side.entity";
 
 @Entity('translations')
 export class TranslationsEntity extends BaseEntity {
@@ -28,20 +33,32 @@ export class TranslationsEntity extends BaseEntity {
     @ManyToOne(() => ContentEntity, content => content.translations, { onDelete: 'CASCADE' })
     content: ContentEntity;
 
+    @ManyToOne(() => SideEntity, side => side.translations, { onDelete: 'CASCADE' })
+    side: SideEntity;
+
     @ManyToOne(() => ProgramEntity, program => program.translations, { onDelete: 'CASCADE' })
     program: ContentEntity;
 
     @ManyToOne(() => StudyAreaEntity, study => study.translations, { onDelete: 'CASCADE' })
     studyArea: StudyAreaEntity;
 
-    @ManyToOne(() => StudyAreaEntity, study => study.faq, { onDelete: 'CASCADE' })
-    faq: StudyAreaEntity;
+    @ManyToOne(() => FaqEntity, faq => faq.translations, { onDelete: 'CASCADE' })
+    faq: FaqEntity;
 
     @ManyToOne(() => CustomersEntity, customer => customer.translations, { onDelete: 'CASCADE' })
     customers: CustomersEntity;
 
     @ManyToOne(() => NewsEntity, news => news.translations, { onDelete: 'CASCADE' })
     news: NewsEntity;
+
+    @ManyToOne(() => ServiceEntity, service => service.translations, { onDelete: 'CASCADE' })
+    service: ServiceEntity;
+
+    @ManyToOne(() => ProjectEntity, project => project.translations, { onDelete: 'CASCADE' })
+    project: ProjectEntity;
+
+    @ManyToOne(() => BlogsEntity, blogs => blogs.translations, { onDelete: 'CASCADE' })
+    blogs: BlogsEntity;
 
     @ManyToOne(() => MetaEntity, meta => meta.translations, { onDelete: 'CASCADE' })
     meta: MetaEntity;

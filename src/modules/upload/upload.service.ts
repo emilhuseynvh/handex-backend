@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import config from 'src/config';
 import { UploadEntity } from 'src/entities/upload.entity';
 import { CloudinaryService } from 'src/libs/cloudinary/cloudinary.service';
 import { DataSource, Repository } from 'typeorm';
@@ -15,21 +16,24 @@ export class UploadService {
     this.imageRepo = this.dataSoruce.getRepository(UploadEntity);
   }
 
-  async uploadImage(file: Express.Multer.File) {
-    try {
-      const result = await this.cloudinaryService.uploadFile(file);
-      if (!result?.url) throw new Error();
+  async saveFile(file: Express.Multer.File) {
+    console.log(file);
 
-      const image = this.imageRepo.create({
-        url: result.url,
-      });
+    let result = this.imageRepo.create({
+      url: config.url + '/' + file.path
+    });
 
-      await image.save();
+    await result.save();
 
-      return image;
-    } catch (err) {
-        console.log(err);
-      throw new BadRequestException('Something went wrong');
-    }
+    return result;
+  }
+
+  async saveFiles(files: Express.Multer.File[]) {
+    return files.map(file => ({
+      originalname: file.originalname,
+      filename: file.filename,
+      path: file.path,
+      size: file.size,
+    }));
   }
 }

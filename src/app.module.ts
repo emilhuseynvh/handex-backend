@@ -13,7 +13,6 @@ import { FileModule } from './modules/upload/upload.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MetaModule } from './modules/meta/meta.module';
 import { ConsultationModule } from './modules/consultation/consultation.module';
-import { StatisticModule } from './modules/statistics/statistic.module';
 import { NewsModule } from './modules/news/news.module';
 import { CourseModule } from './modules/course/course.module';
 import { GeneralModule } from './modules/general/general.module';
@@ -22,6 +21,13 @@ import { UserModule } from './modules/user/user.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { StudyAreaModule } from './modules/studyArea/studyArea.module';
+import { BlogsModule } from './modules/blogs/blogs.module';
+import { ProjectModule } from './modules/project/project.module';
+import { ServiceModule } from './modules/service/service.module';
+import { FaqModule } from './modules/faq/faq.module';
+import { ProgramModule } from './modules/program/program.module';
+import { AboutModule } from './modules/about/about.module';
+import { SectionModule } from './modules/section/section.module';
 
 @Module({
   imports: [
@@ -54,22 +60,28 @@ import { StudyAreaModule } from './modules/studyArea/studyArea.module';
       guard: { mount: true },
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
+      rootPath: join(__dirname, 'uploads'),
       serveRoot: '/uploads',
     }),
-    ContentModule,
     AuthModule,
+    ContentModule,
     FileModule,
     MetaModule,
     ConsultationModule,
-    StatisticModule,
-    NewsModule,
     CourseModule,
     GeneralModule,
     UserModule,
     CustomersModule,
     ProfilesModule,
-    StudyAreaModule
+    StudyAreaModule,
+    FaqModule,
+    ProgramModule,
+    NewsModule,
+    BlogsModule,
+    ProjectModule,
+    ServiceModule,
+    AboutModule,
+    SectionModule
   ],
   controllers: [],
   providers: [AppService],

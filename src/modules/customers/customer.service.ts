@@ -101,7 +101,17 @@ export class CustomerService {
         if (params.bank_name) customer.bank_name = params.bank_name;
         
         if (params.translations && params.translations.length > 0) {
-            await this.translationsRepo.remove(customer.translations);
+            const updatedLanguages = params.translations.map(item => item.lang);
+            
+            const translationsToRemove = customer.translations.filter(
+                translation => translation.field === 'comment' && 
+                                translation.model === 'customers' && 
+                                updatedLanguages.includes(translation.lang)
+            );
+            
+            if (translationsToRemove.length > 0) {
+                await this.translationsRepo.remove(translationsToRemove);
+            }
             
             const translationsEntities = params.translations.map(item => {
                 return this.translationsRepo.create({
@@ -112,7 +122,11 @@ export class CustomerService {
                 });
             });
             
-            customer.translations = translationsEntities;
+            customer.translations = [...customer.translations.filter(
+                translation => translation.field !== 'comment' || 
+                                translation.model !== 'customers' || 
+                                !updatedLanguages.includes(translation.lang)
+            ), ...translationsEntities];
         }
         
         return await customer.save();

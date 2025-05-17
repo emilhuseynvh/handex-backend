@@ -9,17 +9,14 @@ export class ContentEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column()
+    slug: string;
+    
     @CreateDateColumn()
     createdAt: Date;
 
-    @Column()
-    slug: string;
-
     @UpdateDateColumn()
     updatedAt: Date;
-
-    @OneToMany(() => MetaEntity, meta => meta.content, { cascade: true })
-    meta: MetaEntity[];
 
     @ManyToMany(() => UploadEntity, upload => upload.content, { cascade: true })
     @JoinTable()

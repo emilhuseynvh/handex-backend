@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsNumber, IsString } from "class-validator";
-import { MetaEntity } from "src/entities/meta.entity";
+import { IsArray, IsEnum, IsNumber, IsString, ValidateNested } from "class-validator";
 import { CreateMetaDto } from "src/modules/meta/meta-dto/create-meta.dto";
 import { Lang } from "src/shares/enums/lang.enum";
 
@@ -28,6 +27,11 @@ export class CreateNewsDto {
     @ApiProperty({ default: 1 })
     image: number;
 
+    @Type()
+    @IsString()
+    @ApiProperty({ default: 'xeber' })
+    slug: string;
+
     @Type(() => CreateNewsTranslationsDto)
     @IsArray()
     @ApiProperty({ type: [CreateNewsTranslationsDto] })
@@ -35,6 +39,7 @@ export class CreateNewsDto {
 
     @Type(() => CreateMetaDto)
     @IsArray()
-    @ApiProperty()
+    @ValidateNested({ each: true })
+    @ApiProperty({ type: [CreateMetaDto] })
     meta: CreateMetaDto[];
 }

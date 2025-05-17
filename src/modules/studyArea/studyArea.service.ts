@@ -11,6 +11,8 @@ import { I18nService } from "nestjs-i18n";
 import { UpdateStudyAreaDto } from "./dto/update-studyArea.dto";
 import { UploadEntity } from "src/entities/upload.entity";
 import { faqTranslation, mapTranslation } from "src/shares/utils/translation.util";
+import { MetaEntity } from "src/entities/meta.entity";
+import { FaqEntity } from "src/entities/faq.entity";
 
 @Injectable()
 export class StudyAreaService {
@@ -21,8 +23,14 @@ export class StudyAreaService {
         @InjectRepository(ProgramEntity)
         private programRepo: Repository<ProgramEntity>,
 
+        @InjectRepository(MetaEntity)
+        private metaRepo: Repository<MetaEntity>,
+
         @InjectRepository(UploadEntity)
         private uploadRepo: Repository<UploadEntity>,
+
+        @InjectRepository(FaqEntity)
+        private faqRepo: Repository<FaqEntity>,
 
         @InjectRepository(TranslationsEntity)
         private translationRepo: Repository<TranslationsEntity>,
@@ -36,17 +44,16 @@ export class StudyAreaService {
 
         let result = await this.studyAreaRepo.find({
             where: {
-                faq: { lang },
                 translations: { lang },
-                program: { translations: { lang } }
             },
-            relations: ['image', 'faq', 'translations', 'program', 'program.translations']
+            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations', 'meta', 'meta.translations']
         });
 
         return result.map((item: any) => ({
             ...mapTranslation(item),
             program: item.program.map(item => mapTranslation(item)),
-            faq: faqTranslation(item.faq)
+            faq: item.faq.map(item => mapTranslation(item)),
+            meta: item.meta.map(item => mapTranslation(item))
         }));
     }
 
@@ -55,11 +62,11 @@ export class StudyAreaService {
         let result: any = await this.studyAreaRepo.findOne({
             where: {
                 slug,
-                faq: { lang },
+                faq: { translations: { lang } },
                 translations: { lang },
                 program: { translations: { lang } }
             },
-            relations: ['image', 'faq', 'translations', 'program', 'program.translations']
+            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations']
         });
 
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
@@ -75,7 +82,6 @@ export class StudyAreaService {
 
     async create(params: CreateStudyAreaDto) {
         let translations = [];
-
         for (let translation of params.translations) {
             translations.push(this.translationRepo.create({
                 model: 'studyArea',
@@ -91,35 +97,35 @@ export class StudyAreaService {
                 lang: translation.lang
             }));
         }
-
         await this.translationRepo.save(translations);
-
-        let faqTranslations = [];
-
+        let faq = [];
+        let item = {
+            translations: []
+        };
         for (let translation of params.faq) {
-            faqTranslations.push(this.translationRepo.create({
+            item.translations.push(this.translationRepo.create({
                 model: 'faq',
                 field: 'title',
                 value: translation.title,
                 lang: translation.lang
             }));
 
-            faqTranslations.push(this.translationRepo.create({
+            item.translations.push(this.translationRepo.create({
                 model: 'faq',
                 field: 'description',
                 value: translation.description,
                 lang: translation.lang
             }));
         }
+        await this.translationRepo.save(item.translations);
+        faq.push(this.faqRepo.create(item));
 
         let program = [];
-
         for (let element of params.program) {
             let item = {
-                name: '',
+                name: element.name,
                 translations: []
             };
-            item.name = element.name;
 
             for (let translation of element.translations) {
                 item.translations.push(this.translationRepo.create({
@@ -130,32 +136,59 @@ export class StudyAreaService {
                 }));
             }
 
-            program.push(item);
             await this.translationRepo.save(item.translations);
+            program.push(this.programRepo.create(item));
         }
-
         await this.programRepo.save(program);
 
+        let metaEntries = [];
+        if (params.meta && params.meta.length > 0) {
+            for (let metaItem of params.meta) {
+                if (metaItem.translations && Array.isArray(metaItem.translations)) {
+                    let metaTranslations = [];
+                    for (let translation of metaItem.translations) {
+                        metaTranslations.push(this.translationRepo.create({
+                            model: 'meta',
+                            field: 'name',
+                            lang: translation.lang,
+                            value: translation.name,
+                        }));
 
+                        metaTranslations.push(this.translationRepo.create({
+                            model: 'meta',
+                            field: 'value',
+                            lang: translation.lang,
+                            value: translation.value,
+                        }));
+                    }
 
-        await this.translationRepo.save(faqTranslations);
+                    await this.translationRepo.save(metaTranslations);
 
-        let result = this.studyAreaRepo.create({
+                    const metaEntry = this.metaRepo.create({
+                        translations: metaTranslations,
+                        slug: 'studyArea'
+                    });
+
+                    const savedMeta = await this.metaRepo.save(metaEntry);
+                    metaEntries.push(savedMeta);
+                }
+            }
+        }
+
+        let studyArea = this.studyAreaRepo.create({
             name: params.name,
             slug: params.slug,
-            image: { id: params.image },
-            translations,
-            faq: faqTranslations,
+            color: params.color,
+            meta: metaEntries,
+            image: params.image ? { id: params.image } : null,
+            translations: translations,
+            faq: faq,
             program: program
-
         } as any);
 
-        await this.studyAreaRepo.save(result);
+        await this.studyAreaRepo.save(studyArea);
 
-        return {
-            result
-        };
-
+        return { studyArea };
     }
 
     async update(id: number, params: UpdateStudyAreaDto) {
@@ -164,13 +197,11 @@ export class StudyAreaService {
             relations: ['translations', 'faq', 'program']
         });
 
-        if (!studyArea) {
-            throw new NotFoundException('Study area not found');
-        }
+        if (!studyArea) throw new NotFoundException('Study area not found');
 
-        if (params.name) {
-            studyArea.name = params.name;
-        }
+        if (params.color) studyArea.color = params.color;
+
+        if (params.name) studyArea.name = params.name;
 
         if (params.image) {
             let image = await this.uploadRepo.findOne({ where: { id: params.image } });
@@ -180,8 +211,6 @@ export class StudyAreaService {
         }
 
         if (params.translations) {
-            await this.translationRepo.remove(studyArea.translations);
-
             const translations = [];
             for (const translation of params.translations) {
                 translations.push(this.translationRepo.create({
@@ -198,31 +227,47 @@ export class StudyAreaService {
                     lang: translation.lang
                 }));
             }
-            studyArea.translations = await this.translationRepo.save(translations) as any;
+            const existingTranslations = studyArea.translations ? Array.isArray(studyArea.translations)
+                ? studyArea.translations
+                : [studyArea.translations]
+                : [];
+
+            const savedTranslations = await this.translationRepo.save(translations);
+
+            studyArea.translations = [...existingTranslations, ...savedTranslations] as any;
         }
 
         if (params.faq) {
-            if (studyArea.faq) {
-                await this.translationRepo.remove(studyArea.faq);
-            }
+            const updatingFaqLangs = params.faq.map(f => f.lang);
 
-            const faqTranslations = [];
-            for (const translation of params.faq) {
-                faqTranslations.push(this.translationRepo.create({
+            const existingFaq = studyArea.faq
+                ? Array.isArray(studyArea.faq)
+                    ? studyArea.faq
+                    : [studyArea.faq]
+                : [];
+
+            const faqToKeep = existingFaq.filter(f =>
+                !updatingFaqLangs.includes(f.lang)
+            );
+
+            const newFaqTranslations = params.faq.flatMap(faqItem => [
+                this.translationRepo.create({
                     model: 'faq',
                     field: 'title',
-                    value: translation.title,
-                    lang: translation.lang
-                }));
-
-                faqTranslations.push(this.translationRepo.create({
+                    value: faqItem.title,
+                    lang: faqItem.lang
+                }),
+                this.translationRepo.create({
                     model: 'faq',
                     field: 'description',
-                    value: translation.description,
-                    lang: translation.lang
-                }));
-            }
-            studyArea.faq = await this.translationRepo.save(faqTranslations) as any;
+                    value: faqItem.description,
+                    lang: faqItem.lang
+                })
+            ]);
+
+            const savedFaqTranslations = await this.translationRepo.save(newFaqTranslations);
+
+            studyArea.faq = [...faqToKeep, ...savedFaqTranslations] as any;
         }
 
         if (params.program) {

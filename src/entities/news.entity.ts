@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UploadEntity } from "./upload.entity";
 import { TranslationsEntity } from "./translations.entity";
 import { MetaEntity } from "./meta.entity";
@@ -8,9 +8,11 @@ export class NewsEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => UploadEntity, upload => upload.news)
-    @JoinColumn({ name: 'imageId' })
+    @ManyToOne(() => UploadEntity, upload => upload.news)
     image: UploadEntity;
+
+    @Column({ unique: true })
+    slug: string;
 
     @OneToMany(() => TranslationsEntity, translations => translations.news, { cascade: true })
     translations: TranslationsEntity[];

@@ -30,7 +30,6 @@ export class ProfilesService {
             relations: ['image']
         });
 
-        if (!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
         return result;
     }
