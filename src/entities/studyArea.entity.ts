@@ -16,6 +16,9 @@ export class StudyAreaEntity extends BaseEntity {
     @Column()
     slug: string;
 
+    @Column("text", { array: true })
+    date: string[];
+
     @Column()
     color: string;
 

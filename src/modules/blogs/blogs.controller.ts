@@ -3,6 +3,7 @@ import { ApiQuery } from "@nestjs/swagger";
 import { BlogsService } from "./blogs.service";
 import { CreateBlogsDto } from "./dto/create-blogs.dto";
 import { UpdateBlogsDto } from "./dto/update-blogs.dto";
+import { Auth } from "src/shares/decorators/auth.decorator";
 
 @Controller('blogs')
 export class BlogsController {
@@ -28,16 +29,19 @@ export class BlogsController {
     }
 
     @Post()
+    @Auth()
     async create(@Body() body: CreateBlogsDto) {
         return await this.blogsService.create(body);
     }
 
     @Post(':id')
+    @Auth()
     async update(@Param('id') id: number, @Body() body: UpdateBlogsDto) {
         return await this.blogsService.update(id, body);
     }
 
     @Delete(':id')
+    @Auth()
     async delete(@Param('id') id: number) {
         return await this.blogsService.delete(id);
     }

@@ -85,8 +85,8 @@ export class StudyAreaService {
         for (let translation of params.translations) {
             translations.push(this.translationRepo.create({
                 model: 'studyArea',
-                field: 'date',
-                value: translation.date,
+                field: 'table',
+                value: translation.table,
                 lang: translation.lang
             }));
 
@@ -179,6 +179,7 @@ export class StudyAreaService {
             name: params.name,
             slug: params.slug,
             color: params.color,
+            date: params.date,
             meta: metaEntries,
             image: params.image ? { id: params.image } : null,
             translations: translations,
@@ -199,6 +200,8 @@ export class StudyAreaService {
 
         if (!studyArea) throw new NotFoundException('Study area not found');
 
+        if (params?.date.length) studyArea.date = params.date;
+
         if (params.color) studyArea.color = params.color;
 
         if (params.name) studyArea.name = params.name;
@@ -215,8 +218,8 @@ export class StudyAreaService {
             for (const translation of params.translations) {
                 translations.push(this.translationRepo.create({
                     model: 'studyArea',
-                    field: 'date',
-                    value: translation.date,
+                    field: 'table',
+                    value: translation.table,
                     lang: translation.lang
                 }));
 

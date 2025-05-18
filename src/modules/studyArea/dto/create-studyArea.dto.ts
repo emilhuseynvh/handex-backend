@@ -9,7 +9,7 @@ export class CreateStudyAreaTranslationsDto {
     @Type()
     @IsString()
     @ApiProperty({ default: '5 ay, həftədə 3 dəfə' })
-    date: string;
+    table: string;
 
     @Type()
     @IsString()
@@ -54,6 +54,10 @@ export class CreateStudyAreaDto {
     name: string;
 
     @Type()
+    @IsArray()
+    date: string[];
+
+    @Type()
     @IsString()
     @ApiProperty({ default: 'back-end' })
     slug: string;
@@ -61,7 +65,7 @@ export class CreateStudyAreaDto {
     @Type()
     @IsString()
     @ApiProperty({ default: '#DE465D' })
-    color: string
+    color: string;
 
     @Type()
     @IsNumber()

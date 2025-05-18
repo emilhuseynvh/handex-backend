@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ClsService } from "nestjs-cls";
 import { AboutEntity } from "src/entities/about.entity";
@@ -57,6 +57,8 @@ export class AboutService {
     }
 
     async create(params: CreateAboutPageDto) {
+        let check = await this.aboutRepo.find();
+        if (check.length) throw new ConflictException('You cannot access to create second about');
         let about: any = {
             images: [],
             sections: []
@@ -77,12 +79,21 @@ export class AboutService {
         return about;
     }
 
-    async update(id: number, params: UpdateAboutPageDto) {
-        let about = await this.aboutRepo.findOne({ where: { id } });
+    async update(params: UpdateAboutPageDto) {
+        let about = await this.aboutRepo.find();
 
         if (!about) throw new NotFoundException('About is not found');
 
-
+        if (params.images && params.images.length) {
+            let images = await this.uploadRepo.find({
+                where: { id: In(params.images) }
+            });
+            about[0].images = images;
+            await this.aboutRepo.save(about[0]);
+            return {
+                message: "About updated succesfully"
+            };
+        }
     }
 
     async delete(id: number) {

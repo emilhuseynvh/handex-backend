@@ -3,6 +3,7 @@ import { NewsService } from "./news.service";
 import { CreateNewsDto } from "./dto/create-news.dto";
 import { ApiQuery } from "@nestjs/swagger";
 import { UpdateNewsDto } from "./dto/update-news.dto";
+import { Auth } from "src/shares/decorators/auth.decorator";
 
 @Controller('news')
 export class NewsController {
@@ -26,16 +27,19 @@ export class NewsController {
     }
 
     @Post()
+    @Auth()
     async create(@Body() body: CreateNewsDto) {
         return await this.newsService.create(body);
     }
 
     @Post(':id')
+    @Auth()
     async update(@Param('id') id: number, @Body() body: UpdateNewsDto) {
         return await this.newsService.update(id, body);
     }
 
     @Delete(':id')
+    @Auth()
     async delete(@Param('id') id: number) {
         return await this.newsService.delete(id);
     }
