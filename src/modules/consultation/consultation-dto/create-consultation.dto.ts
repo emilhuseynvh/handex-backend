@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsString, Matches } from "class-validator";
+import { IsNumber, IsString, Matches } from "class-validator";
 
 export class CreateConsultationDto {
     @Type()
@@ -19,7 +19,7 @@ export class CreateConsultationDto {
     phone: string;
 
     @Type()
-    @IsString()
-    @ApiProperty({ default: 'Front-End' })
-    course: string;
+    @IsNumber()
+    @ApiProperty({ default: 1 })
+    course: number;
 }

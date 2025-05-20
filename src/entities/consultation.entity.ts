@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { StudyAreaEntity } from "./studyArea.entity";
 
 @Entity('consultation')
 export class ConsultationEntity {
@@ -14,8 +15,8 @@ export class ConsultationEntity {
     @Column()
     phone: string;
 
-    @Column()
-    course: string;
+    @ManyToOne(() => StudyAreaEntity, study => study.consultation)
+    course: StudyAreaEntity;
 
     @CreateDateColumn()
     createdAt: Date

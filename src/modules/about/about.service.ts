@@ -38,20 +38,50 @@ export class AboutService {
         private cls: ClsService
     ) { }
 
+
+
+
     async list() {
         let lang = this.cls.get<Lang>('lang');
+
         let result = await this.aboutRepo.find({
-            where: {
+            relations: {
                 sections: {
                     left_side: {
-                        translations: { lang }
+                        translations: true
                     },
                     right_side: {
-                        translations: { lang }
+                        translations: true
                     }
                 }
-            }
-        });
+            },
+            where: [
+                {
+                    sections: {
+                        left_side: { type: "text", translations: { lang } },
+                        right_side: { type: "text", translations: { lang } }
+                    }
+                },
+                {
+                    sections: {
+                        left_side: { type: "text", translations: { lang } },
+                        right_side: { type: "image" }
+                    }
+                },
+                {
+                    sections: {
+                        left_side: { type: "image" },
+                        right_side: { type: "text", translations: { lang } }
+                    }
+                },
+                {
+                    sections: {
+                        left_side: { type: "image" },
+                        right_side: { type: "image" }
+                    }
+                }
+            ]
+        } as any);
 
         return result;
     }

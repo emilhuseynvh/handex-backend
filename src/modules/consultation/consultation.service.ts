@@ -5,23 +5,32 @@ import { Repository } from "typeorm";
 import { CreateConsultationDto } from "./consultation-dto/create-consultation.dto";
 import { UpdateConsultationDto } from "./consultation-dto/update-consultation.dto";
 import { I18nService } from "nestjs-i18n";
+import { StudyAreaEntity } from "src/entities/studyArea.entity";
 
 @Injectable()
 export class ConsultationService {
     constructor(
         @InjectRepository(ConsultationEntity)
         private consultationRepo: Repository<ConsultationEntity>,
+
+        @InjectRepository(StudyAreaEntity)
+        private studyAreaRepo: Repository<StudyAreaEntity>,
+
         private i18n: I18nService
     ) { }
 
     async list() {
-        let list = await this.consultationRepo.find();
-
-        return list;
+        return await this.consultationRepo.find({ relations: ['course'] });
     }
 
     async create(params: CreateConsultationDto) {
-        let result = this.consultationRepo.create(params);
+        let check = await this.studyAreaRepo.findOne({ where: { id: params.course } });
+        if (!check) throw new NotFoundException('Study area is not found');
+
+        let result = this.consultationRepo.create({
+            ...params,
+            course: { id: params.course },
+        });
 
         await this.consultationRepo.save(result);
 
@@ -35,16 +44,4 @@ export class ConsultationService {
 
         return { message: this.i18n.t('response.deleted') };
     }
-
-    // async update(id: number, params: UpdateConsultationDto) {
-    //     let consultation = await this.consultationRepo.update(id, params);
-
-    //     if (!consultation.affected) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
-
-    //     return {
-
-    //     };
-
-
-    // }
 }

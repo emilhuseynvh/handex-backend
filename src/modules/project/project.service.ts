@@ -69,11 +69,14 @@ export class ProjectService {
             relations: ['translations', 'image', 'meta', 'meta.translations']
         });
 
-        result = result.map(item => mapTranslation(item));
 
         return {
-            data: result,
-            currentPage: page,
+            data: result.map(item => {
+                return {
+                    ...mapTranslation(item),
+                    meta: item.meta.map(item => mapTranslation(item))
+                };
+            }),
             totalPages: Math.ceil(total / 12),
             totalItems: total,
         };

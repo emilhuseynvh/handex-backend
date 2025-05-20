@@ -16,11 +16,12 @@ export class UploadService {
     this.imageRepo = this.dataSoruce.getRepository(UploadEntity);
   }
 
-  async saveFile(file: Express.Multer.File) {
+  async saveFile(file: Express.Multer.File, alt: string) {
     console.log(file);
 
     let result = this.imageRepo.create({
-      url: config.url + '/' + file.path
+      url: config.url + '/' + file.path,
+      alt
     });
 
     await result.save();

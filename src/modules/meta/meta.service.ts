@@ -31,22 +31,12 @@ export class MetaService {
             relations: ['translations']
         });
 
-        if (!checkField.length) {
-            throw new NotFoundException(this.i18n.t('error.errors.not_found'));
-        }
-        let result = {
-            ...checkField,
-            translations: metaTranslations(checkField[0].translations)
-        };
+        if (!checkField.length)  throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
-        return result;
+        return checkField.map(item => mapTranslation(item));
     }
 
     async create(params: CreateMetaDto) {
-        let check = await this.metaRepo.findOne({ where: { slug: params.slug } });
-
-        if (check) throw new ConflictException(this.i18n.t('error.errors.conflict'));
-
         let meta = this.metaRepo.create({ slug: params.slug });
         await this.metaRepo.save(meta);
 

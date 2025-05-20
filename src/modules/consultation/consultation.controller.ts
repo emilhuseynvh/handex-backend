@@ -11,25 +11,19 @@ export class ConsultationController {
     ) { }
 
     @Get()
+    @Auth()
     async list() {
         return await this.consultationService.list();
     }
 
     @Post()
-    @Auth()
     async create(@Body() body: CreateConsultationDto) {
         return await this.consultationService.create(body);
     }
 
-
-    // @Post(':id')
-    // async update(@Param('id') id: number, @Body() body: UpdateConsultationDto) {
-    //     return await this.consultationService.update(id, body);
-    // }
-
     @Delete(':id')
     @Auth()
     async deleteCons(@Param('id') id: number) {
-       return await this.consultationService.deleteCons(id);
+        return await this.consultationService.deleteCons(id);
     }
 }

@@ -75,10 +75,9 @@ export class SectionService {
             await this.translationsRepo.save(item.translations);
             sections.right_side = item;
         } else {
-            sections.left_side.type = SideEnum.IMAGE;
+            sections.right_side.type = SideEnum.IMAGE;
             sections.right_side.url = params.right_side.url;
         }
-
         await this.sectionRepo.save(sections);
 
         return sections;

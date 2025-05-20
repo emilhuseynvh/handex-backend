@@ -80,11 +80,14 @@ export class NewsService {
             relations: ['translations', 'image', 'meta', 'meta.translations']
         });
 
-        let processed = result.map(item => mapTranslation(item));
 
         return {
-            data: result,
-            currentPage: processed,
+            data: result.map(item => {
+                return {
+                    ...mapTranslation(item),
+                    meta: item.meta.map(item => mapTranslation(item))
+                };
+            }),
             totalPages: Math.ceil(total / 12),
             totalItems: total,
             query: query

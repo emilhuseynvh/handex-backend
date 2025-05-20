@@ -28,6 +28,7 @@ import { FaqModule } from './modules/faq/faq.module';
 import { ProgramModule } from './modules/program/program.module';
 import { AboutModule } from './modules/about/about.module';
 import { SectionModule } from './modules/section/section.module';
+import { ContactModule } from './modules/contact/contact.module';
 
 @Module({
   imports: [
@@ -81,7 +82,8 @@ import { SectionModule } from './modules/section/section.module';
     ProjectModule,
     ServiceModule,
     AboutModule,
-    SectionModule
+    SectionModule,
+    ContactModule
   ],
   controllers: [],
   providers: [AppService],

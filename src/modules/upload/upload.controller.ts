@@ -30,15 +30,16 @@ export class UploadController {
   async uploadSingleFile(
     @UploadedFile(
       new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
-        ],
+        validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 })],
       }),
     )
     file: Express.Multer.File,
+
+    @Body('alt') alt: string,
   ) {
-    return this.uploadService.saveFile(file);
+    return this.uploadService.saveFile(file, alt);
   }
+
 
   @Post('multiple')
   @Auth()

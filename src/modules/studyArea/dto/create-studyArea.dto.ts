@@ -55,6 +55,7 @@ export class CreateStudyAreaDto {
 
     @Type()
     @IsArray()
+    @ApiProperty({ default: ['28 May'] })
     date: string[];
 
     @Type()
