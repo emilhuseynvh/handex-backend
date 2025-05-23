@@ -4,7 +4,7 @@ import { Like, Repository } from "typeorm";
 import { UploadService } from "../upload/upload.service";
 import { I18nService } from "nestjs-i18n";
 import { ClsService } from "nestjs-cls";
-import { mapTranslation } from "src/shares/utils/translation.util";
+import { blogTranslations, faqTranslation, mapTranslation, metaTranslations } from "src/shares/utils/translation.util";
 import { MetaEntity } from "src/entities/meta.entity";
 import { MetaService } from "../meta/meta.service";
 import { UploadEntity } from "src/entities/upload.entity";
@@ -119,7 +119,8 @@ export class BlogsService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,
@@ -135,7 +136,10 @@ export class BlogsService {
         });
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
-        return mapTranslation(result);
+        return {
+            ...mapTranslation(result),
+            meta: result.meta.map(item => mapTranslation(item))
+        };
     }
 
     async create(params: CreateBlogsDto) {
@@ -172,11 +176,10 @@ export class BlogsService {
             });
         }
 
-        let metaTranslations = [];
-
+        let metaArray = [];
         for (let meta of params.meta) {
+            let metaTranslations = [];
             meta.translations.forEach((translation) => {
-                console.log(translation.name);
 
                 metaTranslations.push({
                     model: 'meta',
@@ -192,12 +195,12 @@ export class BlogsService {
                     value: translation.value,
                 });
             });
+            metaArray.push(this.metaRepo.create({ translations: metaTranslations, blogs: blogs.id, slug: 'blogs' } as any));
         }
 
-        let meta = this.metaRepo.create({ translations: metaTranslations, blogs: blogs.id, slug: 'blogs' } as any);
 
         blogs.translations = translations;
-        blogs.meta = [meta] as any;
+        blogs.meta = metaArray as any;
 
         await this.blogRepo.save(blogs);
 

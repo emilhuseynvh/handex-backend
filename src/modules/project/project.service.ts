@@ -54,7 +54,8 @@ export class ProjectService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,
@@ -108,7 +109,8 @@ export class ProjectService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,
@@ -124,7 +126,10 @@ export class ProjectService {
         });
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
-        return mapTranslation(result);
+        return {
+            ...mapTranslation(result),
+            meta: result.meta.map(item => mapTranslation(item))
+        };
     }
 
     async create(params: CreateProjectDto) {
@@ -161,9 +166,9 @@ export class ProjectService {
             });
         }
 
-        let metaTranslations = [];
-
+        let metaArray = [];
         for (let meta of params.meta) {
+            let metaTranslations = [];
             meta.translations.forEach((translation) => {
                 metaTranslations.push({
                     model: 'meta',
@@ -179,12 +184,12 @@ export class ProjectService {
                     value: translation.value,
                 });
             });
+            metaArray.push(this.metaRepo.create({ translations: metaTranslations, project: project.id, slug: 'project' } as any));
         }
 
-        let meta = this.metaRepo.create({ translations: metaTranslations, project: project.id, slug: 'project' } as any);
 
         project.translations = translations;
-        project.meta = [meta] as any;
+        project.meta = metaArray as any;
 
         await this.projectRepo.save(project);
 

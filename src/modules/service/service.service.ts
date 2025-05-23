@@ -55,7 +55,8 @@ export class ServiceService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,
@@ -108,7 +109,8 @@ export class ServiceService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,
@@ -124,7 +126,10 @@ export class ServiceService {
         });
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
-        return mapTranslation(result);
+        return {
+            ...mapTranslation(result),
+            meta: result.meta.map(item => mapTranslation(item))
+        };
     }
 
     async create(params: CreateServiceDto) {
@@ -144,7 +149,6 @@ export class ServiceService {
         await this.serviceRepo.save(service);
 
         let translations = [];
-
         for (let translation of params.translations) {
             translations.push({
                 model: 'service',
@@ -161,9 +165,9 @@ export class ServiceService {
             });
         }
 
-        let metaTranslations = [];
-
+        let metaArray = [];
         for (let meta of params.meta) {
+            let metaTranslations = [];
             meta.translations.forEach((translation) => {
                 console.log(translation.name);
 
@@ -181,12 +185,12 @@ export class ServiceService {
                     value: translation.value,
                 });
             });
+            metaArray.push(this.metaRepo.create({ translations: metaTranslations, service: service.id, slug: 'service' } as any));
         }
 
-        let meta = this.metaRepo.create({ translations: metaTranslations, service: service.id, slug: 'service' } as any);
 
         service.translations = translations;
-        service.meta = [meta] as any;
+        service.meta = metaArray as any;
 
         await this.serviceRepo.save(service);
 

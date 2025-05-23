@@ -65,7 +65,8 @@ export class NewsService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,
@@ -120,7 +121,8 @@ export class NewsService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,
@@ -136,7 +138,10 @@ export class NewsService {
         });
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
 
-        return mapTranslation(result);
+        return {
+            ...mapTranslation(result),
+            meta: result.meta.map(item => mapTranslation(item))
+        };
     }
 
     async create(params: CreateNewsDto) {
@@ -177,9 +182,9 @@ export class NewsService {
             });
         }
 
-        let metaTranslations = [];
-
+        let metaArray = [];
         for (let meta of params.meta) {
+            let metaTranslations = [];
             meta.translations.forEach((translation) => {
 
                 metaTranslations.push({
@@ -196,12 +201,12 @@ export class NewsService {
                     value: translation.value,
                 });
             });
+            metaArray.push(this.metaRepo.create({ translations: metaTranslations, news: news.id, slug: 'news' } as any));
         }
 
-        let meta = this.metaRepo.create({ translations: metaTranslations, news: news.id, slug: 'news' } as any);
 
         news.translations = translations;
-        news.meta = [meta] as any;
+        news.meta = metaArray as any;
 
         await this.newsRepo.save(news);
 

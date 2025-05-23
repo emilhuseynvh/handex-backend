@@ -15,8 +15,6 @@ export class BlogsController {
     @ApiQuery({ name: 'page', required: false })
     @ApiQuery({ name: 'query', required: false })
     async list(@Query('query') query?: string, @Query('page') page?: number) {
-        console.log(query);
-        
         return await this.blogsService.list(
             query,
             typeof page !== 'undefined' && page >= 0 ? page : undefined

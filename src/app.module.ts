@@ -29,6 +29,7 @@ import { ProgramModule } from './modules/program/program.module';
 import { AboutModule } from './modules/about/about.module';
 import { SectionModule } from './modules/section/section.module';
 import { ContactModule } from './modules/contact/contact.module';
+import { RedirectModule } from './modules/redirect/redirect.module';
 
 @Module({
   imports: [
@@ -83,7 +84,8 @@ import { ContactModule } from './modules/contact/contact.module';
     ServiceModule,
     AboutModule,
     SectionModule,
-    ContactModule
+    ContactModule,
+    RedirectModule
   ],
   controllers: [],
   providers: [AppService],

@@ -1,14 +1,46 @@
 export const mapTranslation = (item) => {
-  return {
+  let translations = {
     ...item,
     translations: undefined,
     ...Object.fromEntries(item.translations.map((t) => [t.field, t.value])),
   };
+
+  return translations;
+};
+
+export const blogTranslations = (items) => {
+  console.log(items);
+  
+  const faqArray = [];
+  let currentPair: any = {};
+
+  items.forEach(item => {
+    if (item.field === 'name') {
+      currentPair.name = item.value;
+      if (currentPair.value) {
+        faqArray.push(currentPair);
+        currentPair = {};
+      }
+    }
+    else if (item.field === 'value') {
+      currentPair.value = item.value;
+      if (currentPair.name) {
+        faqArray.push(currentPair);
+        currentPair = {};
+      }
+    }
+  });
+  
+  if (currentPair.title) {
+    faqArray.push(currentPair);
+  }
+
+  return faqArray;
 };
 
 export const faqTranslation = (items) => {
   console.log(items);
-
+  
   const faqArray = [];
   let currentPair: any = {};
 
@@ -17,18 +49,18 @@ export const faqTranslation = (items) => {
       currentPair.title = item.value;
       if (currentPair.description) {
         faqArray.push(currentPair);
-        currentPair = {}
+        currentPair = {};
       }
     }
     else if (item.field === 'description') {
       currentPair.description = item.value;
       if (currentPair.title) {
         faqArray.push(currentPair);
-        currentPair = {}
+        currentPair = {};
       }
     }
   });
-
+  
   if (currentPair.title) {
     faqArray.push(currentPair);
   }
