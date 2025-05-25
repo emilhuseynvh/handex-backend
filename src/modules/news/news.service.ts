@@ -286,12 +286,14 @@ export class NewsService {
             }
 
             for (const metaData of params.meta) {
+                console.log(metaData);
+                
                 for (const translation of metaData.translations) {
                     const lang = translation.lang;
 
                     if (meta.translations) {
                         const existingNameTrans = meta.translations.find(
-                            t => t.lang === lang && t.field === 'name'
+                            t => t.lang === lang && t.field === 'name' && t.value === translation.value
                         );
 
                         if (existingNameTrans) {

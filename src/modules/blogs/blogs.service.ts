@@ -11,6 +11,7 @@ import { UploadEntity } from "src/entities/upload.entity";
 import { BlogsEntity } from "src/entities/blogs.entity";
 import { CreateBlogsDto } from "./dto/create-blogs.dto";
 import { UpdateBlogsDto } from "./dto/update-blogs.dto";
+import { TranslationsEntity } from "src/entities/translations.entity";
 
 @Injectable()
 export class BlogsService {
@@ -20,6 +21,9 @@ export class BlogsService {
 
         @InjectRepository(MetaEntity)
         private metaRepo: Repository<MetaEntity>,
+
+        @InjectRepository(TranslationsEntity)
+        private translationsRepo: Repository<TranslationsEntity>,
 
         private cls: ClsService,
 
@@ -279,52 +283,87 @@ export class BlogsService {
                 await this.metaRepo.save(meta);
             }
 
+            const existingTranslations: any = [];
+            for (let elem of blogs.meta) {
+                for (let t of elem.translations) {
+                    existingTranslations.push(t);
+                }
+            }
+
+
+            const newTranslations: any = [];
+
             for (const metaData of params.meta) {
                 for (const translation of metaData.translations) {
                     const lang = translation.lang;
 
-                    if (meta.translations) {
-                        const existingNameTrans = meta.translations.find(
-                            t => t.lang === lang && t.field === 'name'
-                        );
+                    const existingNameTrans = existingTranslations.find(
+                        t => t.lang === translation.lang && t.field === 'name' && t.value === translation.name
+                    );
 
-                        if (existingNameTrans) {
-                            existingNameTrans.value = translation.name;
-                            await this.metaRepo.manager.save(existingNameTrans);
+                    if (!existingNameTrans) {
+                        let newTranslations = [];
+                        newTranslations.push(this.translationsRepo.create({
+                            model: 'meta',
+                            lang: lang,
+                            field: 'name',
+                            value: translation.name
+                        }));
+
+                        newTranslations.push(this.translationsRepo.create({
+                            model: 'meta',
+                            lang: lang,
+                            field: 'value',
+                            value: translation.value
+                        }));
+                        let newMeta = this.metaRepo.create({ translations: newTranslations, slug: 'blogs', blogs: { id: blogs.id } });
+                        await this.metaRepo.save(newMeta);
+                        blogs.meta.push(newMeta);
+
+                    } else {
+                        const existingNameTransIndex = blogs.meta.findIndex(item => item.translations.find(t => t.lang === lang && t.field === 'name' && t.value === translation.name) && item.translations.find(t => t.lang === lang && t.field === 'value'));
+                        let existingValueTrans = blogs.meta[existingNameTransIndex].translations.find(t => t.field === 'value');
+
+                        if (existingValueTrans) {
+                            existingValueTrans.value = translation.value;
+                            await this.translationsRepo.save(existingValueTrans);
                         } else {
-                            const newNameTrans: any = {
+                            const existingNameTransIndex = blogs.meta.findIndex(item => item.translations.find(t => t.value === translation.name));
+                            let newTranslations = [];
+                            newTranslations.push(this.translationsRepo.create({
                                 model: 'meta',
                                 lang: lang,
                                 field: 'name',
                                 value: translation.name,
-                                entityId: meta.id
-                            };
-                            meta.translations.push(newNameTrans);
-                        }
+                                meta: { id: meta.id }
+                            }));
 
-                        const existingValueTrans = meta.translations.find(
-                            t => t.lang === lang && t.field === 'value'
-                        );
-
-                        if (existingValueTrans) {
-                            existingValueTrans.value = translation.value;
-                            await this.metaRepo.manager.save(existingValueTrans);
-                        } else {
-                            const newValueTrans: any = {
+                            newTranslations.push(this.translationsRepo.create({
                                 model: 'meta',
                                 lang: lang,
                                 field: 'value',
                                 value: translation.value,
-                                entityId: meta.id
-                            };
-                            meta.translations.push(newValueTrans);
+                                meta: { id: meta.id }
+                            }));
+                            await this.translationsRepo.save(newTranslations);
+                            let newMeta = this.metaRepo.create({ translations: newTranslations, slug: 'blogs', blogs: { id: blogs.id } });
+                            await this.metaRepo.save(newMeta);
+                            blogs.meta[existingNameTransIndex].translations.push(...newTranslations);
                         }
                     }
                 }
             }
 
+            if (newTranslations.length > 0) {
+                await this.translationsRepo.save(newTranslations);
+                await this.metaRepo.save({ translations: newTranslations, slug: 'blogs', blogs: { id: blogs.id } });
+            }
+
             await this.metaRepo.save(meta);
         }
+
+
+
 
         await this.blogRepo.save(blogs);
 
