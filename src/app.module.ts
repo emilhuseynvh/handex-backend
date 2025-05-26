@@ -14,7 +14,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MetaModule } from './modules/meta/meta.module';
 import { ConsultationModule } from './modules/consultation/consultation.module';
 import { NewsModule } from './modules/news/news.module';
-import { CourseModule } from './modules/course/course.module';
 import { GeneralModule } from './modules/general/general.module';
 import { ContentModule } from './modules/content/content.module';
 import { UserModule } from './modules/user/user.module';
@@ -30,6 +29,7 @@ import { AboutModule } from './modules/about/about.module';
 import { SectionModule } from './modules/section/section.module';
 import { ContactModule } from './modules/contact/contact.module';
 import { RedirectModule } from './modules/redirect/redirect.module';
+import { GroupModule } from './modules/group/group.module';
 
 @Module({
   imports: [
@@ -70,7 +70,6 @@ import { RedirectModule } from './modules/redirect/redirect.module';
     FileModule,
     MetaModule,
     ConsultationModule,
-    CourseModule,
     GeneralModule,
     UserModule,
     CustomersModule,
@@ -78,6 +77,7 @@ import { RedirectModule } from './modules/redirect/redirect.module';
     StudyAreaModule,
     FaqModule,
     ProgramModule,
+    GroupModule,
     NewsModule,
     BlogsModule,
     ProjectModule,

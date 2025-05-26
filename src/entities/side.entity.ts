@@ -16,5 +16,4 @@ export class SideEntity {
 
     @Column({ nullable: true })
     url: string;
-
 }

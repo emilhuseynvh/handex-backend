@@ -20,7 +20,6 @@ class CreateBlogsTranslationsDto {
     @ApiProperty({ default: Lang.AZ })
     lang: Lang;
 }
-
 export class CreateBlogsDto {
     @Type(() => Number)
     @IsNumber()
@@ -30,7 +29,7 @@ export class CreateBlogsDto {
     @Type()
     @IsString()
     @ApiProperty({ default: 'slug' })
-    slug: string
+    slug: string;
 
     @Type(() => CreateBlogsTranslationsDto)
     @IsArray()

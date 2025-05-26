@@ -1,20 +1,21 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { CoursesEntity } from "./course.entity";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { TranslationsEntity } from "./translations.entity";
+import { StudyAreaEntity } from "./studyArea.entity";
 
 @Entity('group')
-export class GroupEntity{
+export class GroupEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
-    @ManyToOne(() => CoursesEntity, course => course.groups)
-    course: CoursesEntity
-
-    @Column('date')
-    startDate: Date
+    @OneToMany(() => TranslationsEntity, translation => translation.groups, { cascade: true, eager: true })
+    table: TranslationsEntity[];
 
     @Column()
-    daysOfWeek: string
+    startDate: string;
 
-    @CreateDateColumn({type: 'timestamptz'})
-    createdAt: Date
+    @OneToMany(() => TranslationsEntity, translation => translation.text, { cascade: true, eager: true })
+    text: TranslationsEntity[];
+
+    @ManyToOne(() => StudyAreaEntity, study => study.groups, { onDelete: 'CASCADE' })
+    studyArea: StudyAreaEntity;
 }

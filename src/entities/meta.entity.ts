@@ -2,7 +2,6 @@ import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGe
 import { ContentEntity } from "./content.entity";
 import { TranslationsEntity } from "./translations.entity";
 import { NewsEntity } from "./news.entity";
-import { CoursesEntity } from "./course.entity";
 import { BlogsEntity } from "./blogs.entity";
 import { ProjectEntity } from "./project.entity";
 import { ServiceEntity } from "./service.entity";
@@ -33,7 +32,4 @@ export class MetaEntity extends BaseEntity {
 
     @OneToMany(() => TranslationsEntity, translation => translation.meta, { cascade: true, nullable: true })
     translations: TranslationsEntity[];
-
-    @ManyToOne(() => CoursesEntity, course => course.meta)
-    course: CoursesEntity;
 }

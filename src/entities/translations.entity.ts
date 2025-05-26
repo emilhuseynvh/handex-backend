@@ -3,7 +3,6 @@ import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGe
 import { ContentEntity } from "./content.entity";
 import { MetaEntity } from "./meta.entity";
 import { NewsEntity } from "./news.entity";
-import { CoursesEntity } from "./course.entity";
 import { CustomersEntity } from "./customers.entity";
 import { StudyAreaEntity } from "./studyArea.entity";
 import { ProgramEntity } from "./programs.entity";
@@ -12,6 +11,7 @@ import { ProjectEntity } from "./project.entity";
 import { ServiceEntity } from "./service.entity";
 import { FaqEntity } from "./faq.entity";
 import { SideEntity } from "./side.entity";
+import { GroupEntity } from "./group.entity";
 
 @Entity('translations')
 export class TranslationsEntity extends BaseEntity {
@@ -63,6 +63,9 @@ export class TranslationsEntity extends BaseEntity {
     @ManyToOne(() => MetaEntity, meta => meta.translations, { onDelete: 'CASCADE' })
     meta: MetaEntity;
 
-    @ManyToOne(() => CoursesEntity, course => course)
-    course: CoursesEntity;
+    @ManyToOne(() => GroupEntity, group => group.table, { onDelete: 'CASCADE' })
+    groups: GroupEntity;
+
+    @ManyToOne(() => GroupEntity, group => group.text, { onDelete: 'CASCADE' })
+    text: GroupEntity;
 }

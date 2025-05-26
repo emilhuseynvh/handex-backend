@@ -15,7 +15,7 @@ export class ConsultationEntity {
     @Column()
     phone: string;
 
-    @ManyToOne(() => StudyAreaEntity, study => study.consultation)
+    @ManyToOne(() => StudyAreaEntity, study => study.consultation, { onDelete: 'CASCADE' })
     course: StudyAreaEntity;
 
     @CreateDateColumn()

@@ -5,6 +5,7 @@ import { ProgramEntity } from "./programs.entity";
 import { MetaEntity } from "./meta.entity";
 import { FaqEntity } from "./faq.entity";
 import { ConsultationEntity } from "./consultation.entity";
+import { GroupEntity } from "./group.entity";
 
 @Entity('study_area')
 export class StudyAreaEntity extends BaseEntity {
@@ -17,9 +18,6 @@ export class StudyAreaEntity extends BaseEntity {
     @Column()
     slug: string;
 
-    @Column("text", { array: true })
-    date: string[];
-
     @Column()
     color: string;
 
@@ -31,13 +29,16 @@ export class StudyAreaEntity extends BaseEntity {
     translations: TranslationsEntity;
 
     @OneToMany(() => FaqEntity, faq => faq.studyArea, { cascade: true })
-    faq: FaqEntity;
+    faq: FaqEntity[];
 
-    @OneToMany(() => ConsultationEntity, consultation => consultation.course)
-    consultation: ConsultationEntity[]
+    @OneToMany(() => GroupEntity, group => group.studyArea, { cascade: true, nullable: true })
+    groups: GroupEntity[];
+
+    @OneToMany(() => ConsultationEntity, consultation => consultation.course, { cascade: true })
+    consultation: ConsultationEntity[];
 
     @OneToMany(() => ProgramEntity, program => program.studyArea, { cascade: true })
-    program: ProgramEntity;
+    program: ProgramEntity[];
 
     @OneToMany(() => MetaEntity, meta => meta.studyArea, { cascade: true })
     meta: MetaEntity;

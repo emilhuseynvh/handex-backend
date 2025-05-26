@@ -8,9 +8,11 @@ import { ProgramEntity } from "src/entities/programs.entity";
 import { UploadEntity } from "src/entities/upload.entity";
 import { MetaEntity } from "src/entities/meta.entity";
 import { FaqEntity } from "src/entities/faq.entity";
+import { GroupService } from "../group/group.service";
+import { GroupEntity } from "src/entities/group.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([StudyAreaEntity, TranslationsEntity, ProgramEntity, FaqEntity, UploadEntity, MetaEntity])],
+    imports: [TypeOrmModule.forFeature([StudyAreaEntity, TranslationsEntity, GroupEntity, ProgramEntity, FaqEntity, UploadEntity, MetaEntity])],
     controllers: [StudyAreaController],
     providers: [StudyAreaService]
 })

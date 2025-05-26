@@ -289,8 +289,6 @@ export class BlogsService {
                     existingTranslations.push(t);
                 }
             }
-
-
             const newTranslations: any = [];
 
             for (const metaData of params.meta) {

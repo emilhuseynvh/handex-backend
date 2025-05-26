@@ -13,6 +13,8 @@ import { UploadEntity } from "src/entities/upload.entity";
 import { faqTranslation, mapTranslation } from "src/shares/utils/translation.util";
 import { MetaEntity } from "src/entities/meta.entity";
 import { FaqEntity } from "src/entities/faq.entity";
+import { GroupService } from "../group/group.service";
+import { GroupEntity } from "src/entities/group.entity";
 
 @Injectable()
 export class StudyAreaService {
@@ -32,6 +34,9 @@ export class StudyAreaService {
         @InjectRepository(FaqEntity)
         private faqRepo: Repository<FaqEntity>,
 
+        @InjectRepository(GroupEntity)
+        private groupRepo: Repository<GroupEntity>,
+
         @InjectRepository(TranslationsEntity)
         private translationRepo: Repository<TranslationsEntity>,
 
@@ -46,151 +51,132 @@ export class StudyAreaService {
             where: {
                 translations: { lang },
             },
-            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations', 'meta', 'meta.translations']
+            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations', 'meta', 'meta.translations', 'groups', 'groups.text', 'groups.table']
         });
-
         return result.map((item: any) => ({
             ...mapTranslation(item),
             program: item.program.map(item => mapTranslation(item)),
             faq: item.faq.map(item => mapTranslation(item)),
-            meta: item.meta.map(item => mapTranslation(item))
+            meta: item.meta.map(item => mapTranslation(item)),
+            group: item.groups
         }));
     }
 
     async listOne(slug: string) {
         let lang = this.cls.get<Lang>('lang');
-        let result: any = await this.studyAreaRepo.findOne({
+        let result = await this.studyAreaRepo.findOne({
             where: {
                 slug,
                 faq: { translations: { lang } },
                 translations: { lang },
                 program: { translations: { lang } }
             },
-            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations']
+            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations', 'group', 'group.text', 'group.table']
         });
 
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
-        console.log(result);
-
 
         return {
             ...mapTranslation(result),
             program: result.program.map(item => mapTranslation(item)),
-            faq: faqTranslation(result.faq)
+            faq: result.faq.map(item => mapTranslation(item))
         };
     }
 
     async create(params: CreateStudyAreaDto) {
-        let translations = [];
-        for (let translation of params.translations) {
-            translations.push(this.translationRepo.create({
-                model: 'studyArea',
-                field: 'table',
-                value: translation.table,
-                lang: translation.lang
-            }));
-
-            translations.push(this.translationRepo.create({
-                model: 'studyArea',
-                field: 'course_detail',
-                value: translation.course_detail,
-                lang: translation.lang
-            }));
-        }
-        await this.translationRepo.save(translations);
-        let faq = [];
-        let item = {
-            translations: []
-        };
-        for (let translation of params.faq) {
-            item.translations.push(this.translationRepo.create({
-                model: 'faq',
-                field: 'title',
-                value: translation.title,
-                lang: translation.lang
-            }));
-
-            item.translations.push(this.translationRepo.create({
-                model: 'faq',
-                field: 'description',
-                value: translation.description,
-                lang: translation.lang
-            }));
-        }
-        await this.translationRepo.save(item.translations);
-        faq.push(this.faqRepo.create(item));
-
-        let program = [];
-        for (let element of params.program) {
-            let item = {
-                name: element.name,
-                translations: []
-            };
-
-            for (let translation of element.translations) {
-                item.translations.push(this.translationRepo.create({
-                    model: 'program',
-                    field: 'description',
-                    value: translation.description,
-                    lang: translation.lang
-                }));
-            }
-
-            await this.translationRepo.save(item.translations);
-            program.push(this.programRepo.create(item));
-        }
-        await this.programRepo.save(program);
-
-        let metaEntries = [];
-        if (params.meta && params.meta.length > 0) {
-            for (let metaItem of params.meta) {
-                if (metaItem.translations && Array.isArray(metaItem.translations)) {
-                    let metaTranslations = [];
-                    for (let translation of metaItem.translations) {
-                        metaTranslations.push(this.translationRepo.create({
-                            model: 'meta',
-                            field: 'name',
-                            lang: translation.lang,
-                            value: translation.name,
-                        }));
-
-                        metaTranslations.push(this.translationRepo.create({
-                            model: 'meta',
-                            field: 'value',
-                            lang: translation.lang,
-                            value: translation.value,
-                        }));
-                    }
-
-                    await this.translationRepo.save(metaTranslations);
-
-                    const metaEntry = this.metaRepo.create({
-                        translations: metaTranslations,
-                        slug: 'studyArea'
-                    });
-
-                    const savedMeta = await this.metaRepo.save(metaEntry);
-                    metaEntries.push(savedMeta);
-                }
-            }
-        }
-
-        let studyArea = this.studyAreaRepo.create({
+        const studyArea = this.studyAreaRepo.create({
             name: params.name,
             slug: params.slug,
             color: params.color,
-            date: params.date,
-            meta: metaEntries,
             image: params.image ? { id: params.image } : null,
-            translations: translations,
-            faq: faq,
-            program: program
+
+            translations: params.translations.map(t =>
+                this.translationRepo.create({
+                    model: 'studyArea',
+                    field: 'course_detail',
+                    lang: t.lang,
+                    value: t.course_detail,
+                })
+            ),
+
+            faq: [{
+                translations: params.faq.flatMap(f => [
+                    this.translationRepo.create({
+                        model: 'faq',
+                        field: 'title',
+                        lang: f.lang,
+                        value: f.title,
+                    }),
+                    this.translationRepo.create({
+                        model: 'faq',
+                        field: 'description',
+                        lang: f.lang,
+                        value: f.description,
+                    }),
+                ]),
+            }],
+
+            program: params.program.map(p =>
+                this.programRepo.create({
+                    name: p.name,
+                    translations: p.translations.map(tr =>
+                        this.translationRepo.create({
+                            model: 'program',
+                            field: 'description',
+                            lang: tr.lang,
+                            value: tr.description,
+                        })
+                    ),
+                })
+            ),
+
+            meta: (params.meta || []).map(m =>
+                this.metaRepo.create({
+                    slug: 'studyArea',
+                    translations: m.translations.flatMap(tr => [
+                        this.translationRepo.create({
+                            model: 'meta',
+                            field: 'name',
+                            lang: tr.lang,
+                            value: tr.name,
+                        }),
+                        this.translationRepo.create({
+                            model: 'meta',
+                            field: 'value',
+                            lang: tr.lang,
+                            value: tr.value,
+                        }),
+                    ]),
+                })
+            ),
+
+            groups: params.group.map(g =>
+                this.groupRepo.create({
+                    startDate: g.startDate,
+                    text: g.text.map(tx =>
+                        this.translationRepo.create({
+                            model: 'group',
+                            field: 'text',
+                            lang: tx.lang,
+                            value: tx.name,
+                        })
+                    ),
+                    table: g.table.map(tb =>
+                        this.translationRepo.create({
+                            model: 'group',
+                            field: 'table',
+                            lang: tb.lang,
+                            value: tb.name,
+                        })
+                    ),
+                })
+            )
         } as any);
 
-        await this.studyAreaRepo.save(studyArea);
-
-        return { studyArea };
+        const saved = await this.studyAreaRepo.save(studyArea);
+        return { studyArea: saved };
     }
+
 
     async update(id: number, params: UpdateStudyAreaDto) {
         const studyArea = await this.studyAreaRepo.findOne({
@@ -200,7 +186,6 @@ export class StudyAreaService {
 
         if (!studyArea) throw new NotFoundException('Study area not found');
 
-        if (params?.date.length) studyArea.date = params.date;
 
         if (params.color) studyArea.color = params.color;
 
@@ -216,13 +201,6 @@ export class StudyAreaService {
         if (params.translations) {
             const translations = [];
             for (const translation of params.translations) {
-                translations.push(this.translationRepo.create({
-                    model: 'studyArea',
-                    field: 'table',
-                    value: translation.table,
-                    lang: translation.lang
-                }));
-
                 translations.push(this.translationRepo.create({
                     model: 'studyArea',
                     field: 'course_detail',
@@ -249,9 +227,9 @@ export class StudyAreaService {
                     : [studyArea.faq]
                 : [];
 
-            const faqToKeep = existingFaq.filter(f =>
-                !updatingFaqLangs.includes(f.lang)
-            );
+            // const faqToKeep = existingFaq.filter(f =>
+            //     !updatingFaqLangs.includes(f.lang)
+            // );
 
             const newFaqTranslations = params.faq.flatMap(faqItem => [
                 this.translationRepo.create({
@@ -270,7 +248,7 @@ export class StudyAreaService {
 
             const savedFaqTranslations = await this.translationRepo.save(newFaqTranslations);
 
-            studyArea.faq = [...faqToKeep, ...savedFaqTranslations] as any;
+            // studyArea.faq = [...faqToKeep, ...savedFaqTranslations] as any;
         }
 
         if (params.program) {

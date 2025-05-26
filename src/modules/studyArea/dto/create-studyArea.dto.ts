@@ -1,16 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsNumber, IsString } from "class-validator";
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 import { CreateFaqTranslationsDto } from "src/modules/faq/dto/create-faq.dto";
+import { CreateGroupDto } from "src/modules/group/dto/create-group.dto";
 import { CreateMetaDto } from "src/modules/meta/meta-dto/create-meta.dto";
 import { Lang } from "src/shares/enums/lang.enum";
 
 export class CreateStudyAreaTranslationsDto {
-    @Type()
-    @IsString()
-    @ApiProperty({ default: '5 ay, həftədə 3 dəfə' })
-    table: string;
-
     @Type()
     @IsString()
     @ApiProperty({ default: 'Handex-də Data Analitika tədrisi, tələbələri real dünya problemlərini həll edəcək qlobal bilik və praktiki bacarıqlarla təchiz edən innovativ və təcrübə yönümlü proqramdır.' })
@@ -54,11 +50,6 @@ export class CreateStudyAreaDto {
     name: string;
 
     @Type()
-    @IsArray()
-    @ApiProperty({ default: ['28 May'] })
-    date: string[];
-
-    @Type()
     @IsString()
     @ApiProperty({ default: 'back-end' })
     slug: string;
@@ -92,4 +83,10 @@ export class CreateStudyAreaDto {
     @IsArray()
     @ApiProperty({ type: [CreateMetaDto] })
     meta: CreateMetaDto[];
+
+    @Type(() => CreateGroupDto)
+    @IsOptional()
+    @IsArray()
+    @ApiProperty({ type: [CreateGroupDto] })
+    group: CreateGroupDto[];
 }
