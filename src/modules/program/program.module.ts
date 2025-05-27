@@ -5,9 +5,10 @@ import { TranslationsEntity } from "src/entities/translations.entity";
 import { ProgramController } from "./program.controller";
 import { ProgramService } from "./program.service";
 import { StudyAreaEntity } from "src/entities/studyArea.entity";
+import { UploadEntity } from "src/entities/upload.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ProgramEntity, TranslationsEntity, StudyAreaEntity])],
+    imports: [TypeOrmModule.forFeature([ProgramEntity, TranslationsEntity, StudyAreaEntity, UploadEntity])],
     controllers: [ProgramController],
     providers: [ProgramService]
 })

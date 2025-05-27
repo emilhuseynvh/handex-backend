@@ -36,6 +36,11 @@ export class CreateProgramDto {
     @ApiProperty({ default: 'Backend' })
     name: string;
 
+    @Type(() => Number)
+    @IsNumber()
+    @ApiProperty({ default: 1 })
+    image: number;
+
     @Type(() => CreateProgramTranslationsDto)
     @IsArray()
     @ApiProperty({ type: [CreateProgramTranslationsDto] })

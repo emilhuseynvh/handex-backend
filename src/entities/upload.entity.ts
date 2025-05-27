@@ -9,6 +9,7 @@ import { BlogsEntity } from "./blogs.entity";
 import { ProjectEntity } from "./project.entity";
 import { ServiceEntity } from "./service.entity";
 import { AboutEntity } from "./about.entity";
+import { ProgramEntity } from "./programs.entity";
 
 @Entity('upload')
 export class UploadEntity extends BaseEntity {
@@ -29,6 +30,9 @@ export class UploadEntity extends BaseEntity {
 
     @OneToMany(() => NewsEntity, project => project.image)
     project: ProjectEntity;
+
+    @OneToMany(() => ProgramEntity, program => program.image)
+    program: ProgramEntity;
 
     @ManyToOne(() => AboutEntity, about => about.images, { onDelete: 'CASCADE' })
     about: AboutEntity;

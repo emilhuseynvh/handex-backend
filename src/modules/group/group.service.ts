@@ -124,4 +124,14 @@ export class GroupService {
             "message": "Group updated succesfully"
         };
     }
+
+    async delete(id: number) {
+        let result = await this.groupRepo.delete(id);
+
+        if (!result.affected) throw new NotFoundException('group is not found');
+
+        return {
+            message: 'group deleted succesfully'
+        };
+    }
 }

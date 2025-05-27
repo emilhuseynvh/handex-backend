@@ -9,12 +9,16 @@ import { TranslationsEntity } from "src/entities/translations.entity";
 import { CreateProgramDto } from "./dto/create-program.dto";
 import { StudyAreaEntity } from "src/entities/studyArea.entity";
 import { UpdateProgramDto } from "./dto/update-program.dto";
+import { UploadEntity } from "src/entities/upload.entity";
 
 @Injectable()
 export class ProgramService {
     constructor(
         @InjectRepository(ProgramEntity)
         private programRepo: Repository<ProgramEntity>,
+
+        @InjectRepository(UploadEntity)
+        private uploadRepo: Repository<UploadEntity>,
 
         @InjectRepository(TranslationsEntity)
         private translationRepo: Repository<TranslationsEntity>,
@@ -32,7 +36,7 @@ export class ProgramService {
                 translations: { lang },
                 studyArea: { id: areaId }
             },
-            relations: ['translations']
+            relations: ['translations', 'image']
         });
 
         return result.map(item => mapTranslation(item));
@@ -58,6 +62,7 @@ export class ProgramService {
 
         let result = this.programRepo.create({
             name: params.name,
+            image: { id: params.image },
             studyArea: { id: params.studyArea },
             translations: newTranslations
         });
@@ -74,6 +79,12 @@ export class ProgramService {
         });
 
         if (!program) throw new NotFoundException('Program is not found');
+
+        if (params.image) {
+            let image = await this.uploadRepo.findOne({ where: { id: params.image } });
+            if (!image) throw new NotFoundException('Image is not found');
+            program.image = image;
+        }
 
         if (params.name) program.name = params.name;
 

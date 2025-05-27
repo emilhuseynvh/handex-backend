@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { StudyAreaEntity } from "src/entities/studyArea.entity";
 import { Repository } from "typeorm";
@@ -84,6 +84,9 @@ export class StudyAreaService {
     }
 
     async create(params: CreateStudyAreaDto) {
+        let check = await this.studyAreaRepo.findOne({ where: { slug: params.slug } });
+        if (check) throw new ConflictException(`Study area in ${params.slug} slug is already exists`);
+
         const studyArea = this.studyAreaRepo.create({
             name: params.name,
             slug: params.slug,
@@ -118,6 +121,7 @@ export class StudyAreaService {
 
             program: params.program.map(p =>
                 this.programRepo.create({
+                    image: { id: p.image },
                     name: p.name,
                     translations: p.translations.map(tr =>
                         this.translationRepo.create({

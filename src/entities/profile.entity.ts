@@ -1,5 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UploadEntity } from "./upload.entity";
+import { TranslationsEntity } from "./translations.entity";
 
 @Entity('profiles')
 export class ProfilesEntity extends BaseEntity {
@@ -14,6 +15,10 @@ export class ProfilesEntity extends BaseEntity {
 
     @Column()
     model: string;
+
+    @OneToMany(() => TranslationsEntity, translation => translation.profile, { eager: true, cascade: true, nullable: true })
+    translations: TranslationsEntity[];
+
 
     @OneToOne(() => UploadEntity, upload => upload.profile)
     @JoinColumn()

@@ -16,9 +16,8 @@ export class StudyAreaController {
         return await this.studyAreaService.list();
     }
 
-    @Get('one')
-    @ApiQuery({ name: "slug" })
-    async listOne(@Query('slug') slug: string) {
+    @Get(':slug')
+    async listOne(@Param('slug') slug: string) {
         return await this.studyAreaService.listOne(slug);
     }
 

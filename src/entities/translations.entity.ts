@@ -12,6 +12,7 @@ import { ServiceEntity } from "./service.entity";
 import { FaqEntity } from "./faq.entity";
 import { SideEntity } from "./side.entity";
 import { GroupEntity } from "./group.entity";
+import { ProfilesEntity } from "./profile.entity";
 
 @Entity('translations')
 export class TranslationsEntity extends BaseEntity {
@@ -32,6 +33,9 @@ export class TranslationsEntity extends BaseEntity {
 
     @ManyToOne(() => ContentEntity, content => content.translations, { onDelete: 'CASCADE' })
     content: ContentEntity;
+
+    @ManyToOne(() => ProfilesEntity, profile => profile.translations, { onDelete: 'CASCADE' })
+    profile: ContentEntity;
 
     @ManyToOne(() => SideEntity, side => side.translations, { onDelete: 'CASCADE' })
     side: SideEntity;
