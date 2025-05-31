@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsNumber, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 import { Lang } from "src/shares/enums/lang.enum";
 
 class CreateProfileTranslationDto {
@@ -33,6 +33,7 @@ export class CreateProfilesDto {
 
     @Type(() => CreateProfileTranslationDto)
     @IsArray()
+    @IsOptional()
     @ValidateNested({ each: true })
     @ApiProperty({ type: [CreateProfileTranslationDto] })
     translations: CreateProfileTranslationDto[];

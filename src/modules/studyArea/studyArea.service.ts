@@ -69,9 +69,9 @@ export class StudyAreaService {
                 slug,
                 faq: { translations: { lang } },
                 translations: { lang },
-                program: { translations: { lang } }
+                program: { translations: { lang } },
             },
-            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations', 'group', 'group.text', 'group.table']
+            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations', 'groups', 'groups.text', 'groups.table']
         });
 
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
