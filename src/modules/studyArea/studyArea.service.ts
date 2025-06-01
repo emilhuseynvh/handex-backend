@@ -71,7 +71,7 @@ export class StudyAreaService {
                 translations: { lang },
                 program: { translations: { lang } },
             },
-            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.translations', 'groups', 'groups.text', 'groups.table']
+            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'program.image', 'program.translations', 'groups', 'groups.text', 'groups.table']
         });
 
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));

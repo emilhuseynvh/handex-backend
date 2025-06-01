@@ -69,7 +69,8 @@ export class BlogsService {
                 },
                 image: {
                     id: true,
-                    url: true
+                    url: true,
+                    alt: true
                 },
                 meta: {
                     id: true,

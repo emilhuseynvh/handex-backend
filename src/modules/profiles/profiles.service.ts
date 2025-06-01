@@ -53,23 +53,24 @@ export class ProfilesService {
     }
 
     async create(params: CreateProfilesDto) {
+        let translation = params.translations && params.translations.length ?
+            params.translations.map(t =>
+                this.translationsRepo.create({
+                    model: 'profile',
+                    field: 'description',
+                    lang: t.lang,
+                    value: t.description,
+                })
+            ) : undefined;
         let profile = this.profilesRepo.create({
             name: params.name,
             model: params.model,
             speciality: params.speciality,
             image: { id: params.image },
-            translations:
-                params.translations.map(t =>
-                    this.translationsRepo.create({
-                        model: 'profile',
-                        field: 'description',
-                        lang: t.lang,
-                        value: t.description,
-                    })
-                )
-        });
+            translation
+        } as any);
 
-        await profile.save();
+        await this.profilesRepo.save(profile);
 
         return profile;
     }
