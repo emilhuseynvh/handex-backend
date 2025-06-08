@@ -1,0 +1,22 @@
+{
+  "full_name": {
+    "isString": "Ad və soyad mətn formatında olmalıdır.",
+    "minLength": "Ad və soyad boş ola bilməz."
+  },
+  "email": {
+    "isEmail": "E-poçt ünvanı düzgün formatda olmalıdır.",
+    "minLength": "E-poçt ünvanı boş ola bilməz."
+  },
+  "phone": {
+    "isString": "Telefon nömrəsi mətn formatında olmalıdır.",
+    "minLength": "Telefon nömrəsi boş ola bilməz."
+  },
+  "title": {
+    "isString": "Başlıq mətn formatında olmalıdır.",
+    "minLength": "Başlıq boş ola bilməz."
+  },
+  "message": {
+    "isString": "Mesaj mətn formatında olmalıdır.",
+    "minLength": "Mesaj boş ola bilməz."
+  }
+}

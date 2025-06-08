@@ -6,15 +6,14 @@ export class GeneralEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('text', { array: true })
-    @Column('jsonb', { nullable: true })
+    @Column('json', { nullable: true })
     phone: string[];
 
-    @Column('jsonb', { nullable: true })
+    @Column('json', { nullable: true })
     statistics: {
-        certificates: number,
-        students: number,
-        teachers: number,
+        certificates: number;
+        students: number;
+        teachers: number;
         workers: number;
     };
 

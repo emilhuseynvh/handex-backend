@@ -29,24 +29,28 @@ export class ContentService {
     async get(slug: string, query: string) {
         let lang = this.cls.get('lang');
 
-        let queryBuilder = this.contentRepo
-            .createQueryBuilder('content')
-            .leftJoinAndSelect(
-                'content.translations',
-                'contentTranslations',
-                'contentTranslations.lang = :lang',
-                { lang }
-            )
-            .leftJoinAndSelect('content.images', 'images')
-            .where('content.slug = :slug', { slug });
-
-        if (query) {
-            queryBuilder.andWhere('contentTranslations.value ILIKE :query', { query: `%${query}%` });
-        }
-
-        const result = await queryBuilder.getMany();
-
-        if (!result.length) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
+        const result = await this.contentRepo.find({
+            where: {
+                slug,
+                translations: {
+                    lang
+                }
+            },
+            select: {
+                id: true,
+                images: {
+                    id: true,
+                    url: true,
+                    alt: true
+                },
+                translations: {
+                    id: true,
+                    value: true,
+                    field: true
+                }
+            },
+            relations: ['translations', 'images']
+        })
 
         return result.map(item => mapTranslation(item));
     }
@@ -92,13 +96,13 @@ export class ContentService {
             relations: ['translations']
         });
 
-        
+
         if (!existingContent) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
         if (params.images && params.images.length) {
             const images = await this.uploadRepo.findBy({
                 id: In(params.images)
             });
-            
+
             existingContent.images = images;
         }
 

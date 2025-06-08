@@ -1,0 +1,14 @@
+{
+    "name": {
+        "isString": "Ad yalnız mətn formatında olmalıdır"
+    },
+    "surname": {
+        "isString": "Soyad yalnız mətn formatında olmalıdır"
+    },
+    "phone": {
+        "matches": "Telefon nömrəsi +994 ilə başlamalı və 9 rəqəmli olmalıdır"
+    },
+    "course": {
+        "isNumber": "Kurs sahəsi yalnız rəqəm olmalıdır"
+    }
+}

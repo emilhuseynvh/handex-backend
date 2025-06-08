@@ -12,8 +12,8 @@ export class StudyAreaController {
     ) { }
 
     @Get()
-    async list() {
-        return await this.studyAreaService.list();
+    async list(@Query('model') model: string) {
+        return await this.studyAreaService.list(model);
     }
 
     @Get(':slug')

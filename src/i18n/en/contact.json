@@ -1,0 +1,22 @@
+{
+  "full_name": {
+    "isString": "Full name must be a string.",
+    "minLength": "Full name cannot be empty."
+  },
+  "email": {
+    "isEmail": "Email must be a valid email.",
+    "minLength": "Email cannot be empty."
+  },
+  "phone": {
+    "isString": "Phone number must be a string.",
+    "minLength": "Phone number cannot be empty."
+  },
+  "title": {
+    "isString": "Title must be a string.",
+    "minLength": "Title cannot be empty."
+  },
+  "message": {
+    "isString": "Message must be a string.",
+    "minLength": "Message cannot be empty."
+  }
+}

@@ -29,28 +29,31 @@ export class ProfilesService {
     ) { }
 
     async list(model: string) {
-        let lang = this.cls.get<Lang>('lang');
-        let result = await this.profilesRepo.find({
-            where: {
-                model,
-                translations: {
-                    lang
-                }
-            },
-            select: {
-                id: true,
-                name: true,
-                speciality: true,
-                image: {
-                    id: true,
-                    url: true
-                }
-            },
-            relations: ['image']
-        });
+        const lang = this.cls.get<Lang>('lang');
 
-        return result.map(mapTranslation);
+        const qb = this.profilesRepo.createQueryBuilder('profile')
+            .leftJoinAndSelect('profile.image', 'image')
+            .leftJoinAndSelect('profile.translations', 'translations');
+
+        qb.where('profile.model = :model', { model });
+
+        if (lang) {
+            qb.andWhere('(translations.lang = :lang OR translations.id IS NULL)', { lang });
+        }
+
+        const result = await qb.select([
+            'profile.id',
+            'profile.name',
+            'profile.speciality',
+            'image.id',
+            'image.url',
+            'image.alt',
+            'translations'
+        ]).getMany();
+
+        return result.map(item => item.translations ? mapTranslation(item) : item);
     }
+
 
     async create(params: CreateProfilesDto) {
         let translation = params.translations && params.translations.length ?
@@ -67,8 +70,8 @@ export class ProfilesService {
             model: params.model,
             speciality: params.speciality,
             image: { id: params.image },
-            translation
-        } as any);
+            translations: translation
+        });
 
         await this.profilesRepo.save(profile);
 

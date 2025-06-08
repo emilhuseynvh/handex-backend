@@ -56,6 +56,11 @@ export class CreateStudyAreaDto {
 
     @Type()
     @IsString()
+    @ApiProperty({  default: 'home' })
+    model: string;
+
+    @Type()
+    @IsString()
     @ApiProperty({ default: 'back-end' })
     slug: string;
 

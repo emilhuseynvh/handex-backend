@@ -36,6 +36,7 @@ export class GroupService {
     async create(params: CreateGroupDto) {
         let group = {
             text: [],
+            table: [],
             startDate: '',
             studyArea: { id: 0 }
         };
@@ -50,7 +51,7 @@ export class GroupService {
         }
 
         for (let translation of params.table) {
-            group.text.push(this.translationsRepo.create({
+            group.table.push(this.translationsRepo.create({
                 model: 'group',
                 field: 'table',
                 value: translation.name,

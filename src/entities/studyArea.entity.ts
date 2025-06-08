@@ -34,6 +34,9 @@ export class StudyAreaEntity extends BaseEntity {
     @OneToMany(() => GroupEntity, group => group.studyArea, { cascade: true, nullable: true })
     groups: GroupEntity[];
 
+    @Column()
+    model: string;
+
     @OneToMany(() => ConsultationEntity, consultation => consultation.course, { cascade: true })
     consultation: ConsultationEntity[];
 
@@ -41,5 +44,5 @@ export class StudyAreaEntity extends BaseEntity {
     program: ProgramEntity[];
 
     @OneToMany(() => MetaEntity, meta => meta.studyArea, { cascade: true })
-    meta: MetaEntity;
+    meta: MetaEntity[];
 }

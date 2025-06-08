@@ -1,0 +1,14 @@
+{
+    "name": {
+        "isString": "Name must be a string"
+    },
+    "surname": {
+        "isString": "Surname must be a string"
+    },
+    "phone": {
+        "matches": "Phone number must start with +994 and contain 9 digits"
+    },
+    "course": {
+        "isNumber": "Course field must be a number"
+    }
+}
