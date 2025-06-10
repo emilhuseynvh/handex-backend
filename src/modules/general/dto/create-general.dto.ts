@@ -31,13 +31,4 @@ export class CreateGeneralDto {
     @ApiProperty({ isArray: true })
     @IsOptional()
     company: number[];
-
-    @IsObject()
-    @IsOptional()
-    statistics: {
-            certificates: number;
-            students: number;
-            teachers: number;
-            workers: number;
-    };
 }

@@ -1,6 +1,7 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UploadEntity } from "./upload.entity";
 import { TranslationsEntity } from "./translations.entity";
+import { StudyAreaEntity } from "./studyArea.entity";
 
 @Entity('profiles')
 export class ProfilesEntity extends BaseEntity {
@@ -19,14 +20,10 @@ export class ProfilesEntity extends BaseEntity {
     @OneToMany(() => TranslationsEntity, translation => translation.profile, { eager: true, cascade: true, nullable: true })
     translations: TranslationsEntity[];
 
+    @ManyToOne(() => StudyAreaEntity, study => study.profile, { onDelete: 'CASCADE', nullable: true })
+    studyArea: StudyAreaEntity;
 
     @OneToOne(() => UploadEntity, upload => upload.profile)
     @JoinColumn()
     image: UploadEntity;
-
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
 }

@@ -20,12 +20,6 @@ export class GeneralService {
         let result = await this.generalRepo.find({
             select: {
                 id: true,
-                statistics: {
-                    workers: true,
-                    students: true,
-                    teachers: true,
-                    certificates: true
-                },
                 phone: true,
                 location: true,
                 email: true,
@@ -66,7 +60,6 @@ export class GeneralService {
         if (params.phone) entity.phone = params.phone;
         if (params.email) entity.email = params.email;
         if (params.location) entity.location = params.location;
-        if (params.statistics) entity.statistics = params.statistics;
 
         if (params.company !== undefined) {
             entity.company = params.company.map(id => ({ id } as UploadEntity));

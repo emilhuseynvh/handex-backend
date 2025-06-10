@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
 import { StudyAreaService } from "./studyArea.service";
 import { Auth } from "src/shares/decorators/auth.decorator";
 import { CreateStudyAreaDto } from "./dto/create-studyArea.dto";
@@ -12,8 +12,13 @@ export class StudyAreaController {
     ) { }
 
     @Get()
-    async list(@Query('model') model: string) {
-        return await this.studyAreaService.list(model);
+    async list(
+        @Query('model') model: string,
+        @Query('page') page: string = '1',
+    ) {
+        const pageNum = parseInt(page, 10);
+
+        return await this.studyAreaService.list(model, pageNum);
     }
 
     @Get(':slug')

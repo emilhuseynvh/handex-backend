@@ -68,11 +68,11 @@ export class ProfilesService {
         let profile = this.profilesRepo.create({
             name: params.name,
             model: params.model,
+            studyArea: params.studyArea ? { id: params.studyArea } : undefined,
             speciality: params.speciality,
             image: { id: params.image },
             translations: translation
         });
-
         await this.profilesRepo.save(profile);
 
         return profile;

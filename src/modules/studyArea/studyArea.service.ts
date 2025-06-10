@@ -44,10 +44,12 @@ export class StudyAreaService {
         private i18n: I18nService
     ) { }
 
-    async list(model: string) {
+    async list(model: string, page: number = 1) {
         let lang = this.cls.get<Lang>('lang');
 
-        let result = await this.studyAreaRepo.find({
+        const skip = (page - 1) * 8;
+
+        const [result, total] = await this.studyAreaRepo.findAndCount({
             where: {
                 translations: { lang },
                 model
@@ -62,9 +64,20 @@ export class StudyAreaService {
                     alt: true
                 }
             },
-            relations: ['image']
+            relations: ['image'],
+            skip,
+            take: 8
         });
-        return result;
+
+        return {
+            data: result,
+            pagination: {
+                page,
+                total,
+                totalPages: Math.ceil(total / 8),
+                hasNext: page < Math.ceil(total / 8)
+            }
+        };
     }
 
     async listOne(slug: string) {
@@ -89,17 +102,17 @@ export class StudyAreaService {
                     }
                 }
             },
-            relations: ['image', 'faq', 'faq.translations', 'translations', 'program', 'meta', 'meta.translations', 'program.image', 'program.translations', 'groups', 'groups.text', 'groups.table']
+            relations: ['image', 'faq', 'statistic', 'profile', 'faq.translations', 'translations', 'program', 'meta', 'meta.translations', 'program.image', 'program.translations', 'groups', 'groups.text', 'groups.table']
         });
 
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
-        console.log(result);
-
         return {
             ...mapTranslation(result),
             program: result.program.map(item => mapTranslation(item)),
             faq: result.faq.map(item => mapTranslation(item)),
-            meta: result.meta.map(item => mapTranslation(item))
+            meta: result.meta.map(item => mapTranslation(item)),
+            statistic: result.statistic.map(mapTranslation),
+            profile: result.profile.map(mapTranslation)
         };
     }
 

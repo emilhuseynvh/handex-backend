@@ -30,6 +30,7 @@ import { SectionModule } from './modules/section/section.module';
 import { ContactModule } from './modules/contact/contact.module';
 import { RedirectModule } from './modules/redirect/redirect.module';
 import { GroupModule } from './modules/group/group.module';
+import { StatisticModule } from './modules/statistic/statistic.module';
 
 @Module({
   imports: [
@@ -85,7 +86,8 @@ import { GroupModule } from './modules/group/group.module';
     AboutModule,
     SectionModule,
     ContactModule,
-    RedirectModule
+    RedirectModule,
+    StatisticModule
   ],
   controllers: [],
   providers: [AppService],

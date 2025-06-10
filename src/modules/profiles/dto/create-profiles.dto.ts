@@ -22,6 +22,11 @@ export class CreateProfilesDto {
     name: string;
 
     @Type()
+    @IsNumber()
+    @IsOptional()
+    studyArea: number
+
+    @Type()
     @IsString()
     @ApiProperty({ default: "Full-Stack" })
     speciality: string;

@@ -6,6 +6,8 @@ import { MetaEntity } from "./meta.entity";
 import { FaqEntity } from "./faq.entity";
 import { ConsultationEntity } from "./consultation.entity";
 import { GroupEntity } from "./group.entity";
+import { StatisticEntity } from "./statistic.entity";
+import { ProfilesEntity } from "./profile.entity";
 
 @Entity('study_area')
 export class StudyAreaEntity extends BaseEntity {
@@ -27,6 +29,12 @@ export class StudyAreaEntity extends BaseEntity {
 
     @OneToMany(() => TranslationsEntity, translation => translation.studyArea, { cascade: true })
     translations: TranslationsEntity;
+
+    @OneToMany(() => ProfilesEntity, profile => profile.studyArea, { cascade: true })
+    profile: ProfilesEntity[];
+
+    @OneToMany(() => StatisticEntity, statistic => statistic.studyArea, { cascade: true })
+    statistic: StatisticEntity[];
 
     @OneToMany(() => FaqEntity, faq => faq.studyArea, { cascade: true })
     faq: FaqEntity[];
