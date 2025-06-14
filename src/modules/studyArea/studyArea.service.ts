@@ -44,12 +44,11 @@ export class StudyAreaService {
         private i18n: I18nService
     ) { }
 
-    async list(model: string, page: number = 1) {
+    async list(model: string) {
         let lang = this.cls.get<Lang>('lang');
 
-        const skip = (page - 1) * 8;
 
-        const [result, total] = await this.studyAreaRepo.findAndCount({
+        const result = await this.studyAreaRepo.find({
             where: {
                 translations: { lang },
                 model
@@ -65,44 +64,63 @@ export class StudyAreaService {
                 }
             },
             relations: ['image'],
-            skip,
-            take: 8
         });
 
-        return {
-            data: result,
-            pagination: {
-                page,
-                total,
-                totalPages: Math.ceil(total / 8),
-                hasNext: page < Math.ceil(total / 8)
-            }
-        };
+        return result;
     }
 
     async listOne(slug: string) {
         let lang = this.cls.get<Lang>('lang');
-        let result: any = await this.studyAreaRepo.findOne({
-            where: {
-                slug,
-                faq: { translations: { lang } },
-                translations: { lang },
-                program: { translations: { lang } },
-                groups: {
-                    text: {
-                        lang
-                    },
-                    table: {
-                        lang
-                    }
-                },
-                meta: {
-                    translations: {
-                        lang: lang
-                    }
-                }
-            },
-            relations: ['image', 'faq', 'statistic', 'profile', 'faq.translations', 'translations', 'program', 'meta', 'meta.translations', 'program.image', 'program.translations', 'groups', 'groups.text', 'groups.table']
+
+        const hasRelations = await this.studyAreaRepo.findOne({
+            where: { slug },
+            relations: ['statistic', 'profile', 'groups'],
+            select: { id: true }
+        });
+        console.log(hasRelations);
+        
+        const whereClause: any = {
+            slug,
+            faq: { translations: { lang } },
+            translations: { lang },
+            program: { translations: { lang } },
+            meta: { translations: { lang } }
+        };
+
+        if (hasRelations?.statistic?.length > 0) {
+            whereClause.statistic = { translations: { lang } };
+        }
+
+        if (hasRelations?.profile?.length > 0) {
+            whereClause.profile = { translations: { lang } };
+        }
+
+        if (hasRelations?.groups?.length > 0) {
+            whereClause.groups = {
+                text: { lang },
+                table: { lang }
+            };
+        }
+
+        const result: any = await this.studyAreaRepo.findOne({
+            where: whereClause,
+            relations: [
+                'image',
+                'faq',
+                'statistic',
+                'profile',
+                'profile.image',
+                'faq.translations',
+                'translations',
+                'program',
+                'meta',
+                'meta.translations',
+                'program.image',
+                'program.translations',
+                'groups',
+                'groups.text',
+                'groups.table'
+            ]
         });
 
         if (!result) throw new NotFoundException(this.i18n.t('error.errors.not_found'));
@@ -111,16 +129,17 @@ export class StudyAreaService {
             program: result.program.map(item => mapTranslation(item)),
             faq: result.faq.map(item => mapTranslation(item)),
             meta: result.meta.map(item => mapTranslation(item)),
-            statistic: result.statistic.map(mapTranslation),
-            profile: result.profile.map(mapTranslation)
+            statistic: result.statistic?.map(mapTranslation) || [],
+            profile: result.profile?.map(mapTranslation) || []
         };
     }
+
 
     async create(params: CreateStudyAreaDto) {
         let check = await this.studyAreaRepo.findOne({ where: { slug: params.slug } });
         if (check) throw new ConflictException(`Study area in ${params.slug} slug is already exists`);
 
-        const studyArea = this.studyAreaRepo.create({
+        const studyAreaData: any = {
             name: params.name,
             slug: params.slug,
             model: params.model,
@@ -187,8 +206,10 @@ export class StudyAreaService {
                     ]),
                 })
             ),
+        };
 
-            groups: params.group.map(g =>
+        if (params.group?.length > 0) {
+            studyAreaData.groups = params.group.map(g =>
                 this.groupRepo.create({
                     startDate: g.startDate,
                     text: g.text.map(tx =>
@@ -208,12 +229,14 @@ export class StudyAreaService {
                         })
                     ),
                 })
-            )
-        } as any);
+            );
+        }
 
+        const studyArea = this.studyAreaRepo.create(studyAreaData);
         const saved = await this.studyAreaRepo.save(studyArea);
         return { studyArea: saved };
     }
+
 
 
     async update(id: number, params: UpdateStudyAreaDto) {

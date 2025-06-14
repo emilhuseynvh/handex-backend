@@ -12,13 +12,8 @@ export class StudyAreaController {
     ) { }
 
     @Get()
-    async list(
-        @Query('model') model: string,
-        @Query('page') page: string = '1',
-    ) {
-        const pageNum = parseInt(page, 10);
-
-        return await this.studyAreaService.list(model, pageNum);
+    async list(@Query('model') model: string) {
+        return await this.studyAreaService.list(model);
     }
 
     @Get(':slug')

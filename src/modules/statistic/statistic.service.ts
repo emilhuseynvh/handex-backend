@@ -38,7 +38,7 @@ export class StatisticService {
     async create(params: CreateStatisticDto) {
         let result = this.statisticRepo.create({
             field: params.field,
-            studyArea: { id: params.studyArea },
+            studyArea: params.studyArea ? { id: params.studyArea } : undefined,
             count: params.count,
             translations: params.translations.map(t => (
                 this.translationRepo.create({

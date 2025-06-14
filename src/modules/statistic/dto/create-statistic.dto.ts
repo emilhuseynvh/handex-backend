@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsNumber, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 import { Lang } from "src/shares/enums/lang.enum";
 
 class CreateStatisticTranslationsDto {
@@ -19,6 +19,7 @@ export class CreateStatisticDto {
   count: string;
 
   @ApiProperty({ default: 0 })
+  @IsOptional()
   @IsNumber()
   studyArea: number;
 

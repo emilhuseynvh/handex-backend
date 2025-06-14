@@ -25,7 +25,7 @@ export class ConsultationService {
 
     async create(params: CreateConsultationDto) {
         let check = await this.studyAreaRepo.findOne({ where: { id: params.course } });
-        if (!check) throw new NotFoundException('Study area is not found');
+        if (!check) throw new NotFoundException(this.i18n.t('consultation.course.isNumber'));
 
         let result = this.consultationRepo.create({
             ...params,

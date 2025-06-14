@@ -9,6 +9,6 @@
         "matches": "Phone number must start with +994 and contain 9 digits"
     },
     "course": {
-        "isNumber": "Course field must be a number"
+        "isNumber": "You have not selected a course"
     }
 }

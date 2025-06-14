@@ -9,6 +9,6 @@
         "matches": "Telefon nömrəsi +994 ilə başlamalı və 9 rəqəmli olmalıdır"
     },
     "course": {
-        "isNumber": "Kurs sahəsi yalnız rəqəm olmalıdır"
+        "isNumber": "Kurs seçimi etməmisiz"
     }
 }

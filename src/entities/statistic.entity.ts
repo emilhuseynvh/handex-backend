@@ -16,6 +16,6 @@ export class StatisticEntity extends BaseEntity {
     @OneToMany(() => TranslationsEntity, translation => translation.statistic, { cascade: true, eager: true })
     translations: TranslationsEntity[];
 
-    @ManyToOne(() => StudyAreaEntity, study => study.statistic, { onDelete: 'CASCADE' })
+    @ManyToOne(() => StudyAreaEntity, study => study.statistic, { onDelete: 'CASCADE', nullable: true })
     studyArea: StudyAreaEntity;
 }
