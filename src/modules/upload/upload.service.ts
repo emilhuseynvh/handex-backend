@@ -17,8 +17,6 @@ export class UploadService {
   }
 
   async saveFile(file: Express.Multer.File, alt: string) {
-    console.log(file);
-
     let result = this.imageRepo.create({
       url: config.url + '/' + file.path,
       alt
